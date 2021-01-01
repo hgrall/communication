@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "outDir": "./build",
+        "lib": [
+            "dom",
+            "es2015",
+            "es5",
+            "es6"
+        ],
+        "strictNullChecks": true,
+        "jsx": "react"
+    },
+    "exclude": [
+        "./node_modules",
+        "./vx0_distribution"
+    ]
+}

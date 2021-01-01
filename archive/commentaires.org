@@ -1,0 +1,179 @@
+* Revue de code
+
+- Supprimer les indirections inutiles de self. ???
+
+** Ajout d'interfaces
+
+- explications : cf. Enveloppe
+- bib/noeuds : fait
+
+* TODO Sur la mutabilité
+
+On distingue de manière systématique les types mutables des types
+immutables. On privilégie les types immutabless, qui permettent une
+programmation sans effet de bord. Il est généralement possible de
+convertir un type mutable en un type immutable. Cependant, cette
+conversion n'est pas sûre dans la mesure où la donnée peut être
+partagée, et ainsi être manipulée comme une donnée mutable ou une
+immutable. Il est donc nécessaire de s'assurer de l'usage linéaire de la
+donnée mutable dans ce cas (linéaire = utilisée une et une seule fois,
+pour la conversion en l'occurrence).  Si ce n'est pas le cas, la
+solution est de construire une nouvelle donnée à partir de
+celle mutable.
+
+Le système de types de Typescript n'applique pas la règle suivante,
+pourtant souhaitable :
+- impossible de convertir un type immutable en un type mutable.
+Pour l'appliquer, une convention est suivie : tout type mutable utilisé
+contient un champ supplémentaire, nommé "mutable".
+
+* Nommage
+
+** Mutabilité
+
+Par défaut, tous les types sont immutables. Lorsque ce n'est pas le cas,
+ajouter "mutable" au nom de manière systématique.
+
+** Pureté
+
+Par pur, on veut dire sans effet. Un effet consiste en la modification
+visible d'une donnée mutable ou en la production d'une donnée mutable
+(par une fonction retournant cette donnée).
+
+** Interface
+
+Interface (structurelle)
+- nom
+  - commentaire : interface structurelle définissant ...
+
+Interface JSON (schéma)
+- nom simple si isolé
+- nom précédé de Format si associé à une enveloppe
+  - commentaire : schéma JSON
+
+** Classe
+
+- noms
+
+
+** Fonctions
+
+- nom pour les calculs purs
+  - commentaire sous la forme d'un groupe nominal.
+
+- verbe à l'infinitif pour les fonctions impures (avec effet)
+  - commentaire commençant par un verbe à la troisème personne.
+
+** Méthodes
+
+- nom pour les projections (attributs)
+  - commentaire commençant par un groupe nominal
+- verbe à l'infinitif pour les actions impliquant un effet
+  - commentaire commençant par le verbe à la troisième personne.
+- verbe à la troisième personne pour les sélecteurs ou les tests.
+  - commentaire commençant par "teste si" ou "détermine si".
+
+* Typescript
+
+** Typage structurel
+
+Le interface définissent des types structurels :
+- une liste de champs (appelés propriétés),
+- une liste de méthodes.
+La distinction se fait par la présence ou non d'argument.
+
+** Types primitifs
+
+*** number
+
+- Double precision 64-bit floating point values. It can be used to represent both, integers and fractions.
+
+** TODO Importance de JSON
+
+Syntaxe du langage JSON : cf. https://json.org/
+- Remarque - Pour les objets, une contrainte semble ajoutée : les clés sont deux à deux disjointes.
+  Cette contraine est vérifiée dans Typescript.
+
+Voici la description des structures JSON utilisées dans l'application.
+- Types formats JSON : FormatX par convention
+- Il est recommandé de choisir le plus possible des formatss.
+- Format ::= { (readonly etiquette : Format)*}
+  -        | { (readonly etiquette : Format)*, (etiquette : Format)+, mutable : Unite}
+  -        | { readonly table: { readonly [cle: string]: T }, taille: number}
+  -        | { readonly table: { [cle: string]: T }, taille: number}
+  -        | { table: { readonly [cle: string]: T }, mutable : Unite, taille: number}
+  -        | { table: { [cle: string]: T }, mutable : Unite, taille: number}
+
+Le système de types de Typescript n'utilise pas l'annotation readonly :
+il est possible de convertir un document JSON en un document
+mutable, en omettant les annotations readonly.  Ce comportement empêche
+de définir des documents effectivements.
+
+C'est la raison pour laquelle le champ mutable a été ajouté dans la
+grammaire des formats JSON de l'application.  Pour les types appartenant
+à cette grammaire, il devient impossible de convertir un document
+ en un document mutable.
+
+Un document mutable peut être converti en un document. Cette conversion est sûre en l'absence d'effets de bord :
+le document mutable ne doit pas être utilisé en dehors de cette conversion. Si ce n'est pas le cas, il est recommandé d'utiliser
+une copie de la structure mutable.
+
+** JSON : delete
+
+- If the property which you are trying to delete does not exist, delete
+  will not have any effect and will return true.
+
+** TODO Le problème de this en Javascript et Typescript
+
+- cf. https://github.com/Microsoft/TypeScript/wiki/'this'-in-TypeScript
+- cf. http://dmitrysoshnikov.com/ecmascript/javascript-the-core/#closures 
+
+*** TODO Interprétation
+
+Une méthode d'une classe est une fonction ayant un premier paramètre
+implicite this et d'autres paramètres, ceux déclarés.  Le passage de
+l'argument implicite se fait en utilisant la notation pointée :
+
+#+BEGIN_SRC Javascript
+x.f(args) // x remplace this
+#+END_SRC
+
+En Javascript comme en Typescript, il est possible de se référer à la
+méthode comme s'il s'agissait d'un champ.  L'expression x.f s'évalue en
+la fonction ayant this pour premier paramètre. Son passage se fait par
+la notation pointée.
+
+* Documentation
+
+- > typedoc --out documentation/ bibliotheque/types/
+
+* React
+
+- arborescence de composants
+
+- composant
+  - des propriétés, transmises par le parent
+  - un état mutable, intervenant dans le rendu 
+  - des attributs internes 
+    - soit immutables,
+    - soit mutables mais sans effets sur
+      le rendu,
+    - soit mutables en même temps que l'état.
+
+- Principes
+  - Toute modification de l'état implique un nouveau rendu du composant,
+    ainsi que de ses sous-composants. 
+  - Un composant peut transmettre à un sous-composant une fonction de
+    transformation de son état.
+
+* CSS
+
+** Positionnement
+
+- approche bloc 
+  - fixed : relatif à la vue
+  - relative : relatif à la position par défaut    
+  - absolute : relatif à la position du parent  
+
+- alternative : une stratégie particulière 
+  - Flexbox

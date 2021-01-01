@@ -1,0 +1,47 @@
+* TODO enveloppe
+
+- Modèle générique d'une enveloppe d'un état. Classe mère de la plupart des classes développées.
+- Utilisation
+  - Données mutables : TIN pour l'état mutable confiné, TEX pour le format JSON de sérialisation.
+  - Donnéess : TIN = TEX = Fomat JSON, conversion de TIN à TEX = identité.
+    - Possiblement redéfinir val pour éviter le potentiel parcours de l'état.
+  - Implémenter les méthodes abstraites : net et représenter.
+
+- Vérifier que brut est bien défini : définition à partir de TEX (et non de TIN).
+
+* DONE binaire
+
+- mots binairess (comme sous-classe de Tableau, puis Envelope)
+- TODO supprimer les fonctions apparemment inutiles qui sont en commentaire.
+
+* DONE date
+
+- datess en Français (comme sous-classe de Enveloppe)
+
+* DONE identifiant
+
+- identifiants (format JSON) avec leurs fabriques, utilisant un compteur.
+
+* DONE nombres
+
+- fonctions utiles concernant les nombres
+
+* DONE table
+
+Par table, on entend une fonction de string dans un type T, avec un domaine fini.
+
+- formats JSON pour les tables (mutables ets)
+- classes d'implémentation dérivées d'Enveloppe sans
+
+*  TODO tableau
+
+Par tableau, on entend une fonction d'un segment initial de Nat dans un type T.
+
+- terminer les commentaires.
+
+* TODO tableIdentification
+
+- terminer les commentaires.
+
+* DONE typesAtomiques
+

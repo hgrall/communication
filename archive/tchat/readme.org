@@ -1,0 +1,43 @@
+* Renommage et documentation
+
+- commun/echangesTchat : fait
+- serveur/* : fait
+- TODO client/*
+
+* Architecture générale
+
+- applicationTchat : application principale côté serveur (déclarée dans
+  Procfile pour Heroku)
+  - serveur d'applications de tchat : initialisé puis démarré
+  - aiguilleur de tchat : initialisé puis démarré 
+
+- serveurTchat : serveur d'applications, aiguilleur, serveur de canaux,
+  canaux - implémentation de la communication client-serveur par Web
+  Socket 
+  - ServeurApplicationsTchat
+    - réseaux à connecter (déclinés par chemin d'accès) : 5 en étoile, 5
+      en anneau
+    - service de "build/interfaceTchat.html" pour toute requête GET sur
+      un chemin valide (etoileX ou anneauX)
+  - AiguilleurTchat
+    - serveur d'applications
+    - réseaux connectés : portions de réseaux effectivement connectées
+      déclinées par chemin
+    - connexions actives : connexions associées à des clients actifs,
+      déclinées par les identifiants des sommets associés aux clients
+    - aiguillage associant à un chemin un serveur de canaux de
+      communication 
+  - ServeurCanauxTchat
+    - aiguilleur
+    - fabrique de canaux de communication transmettant l'aiguilleur à
+      chaque canal créé
+  - CanalTchat
+    - réseaux à connecter (déclinés par chemin d'accès)
+    - réseaux connectés : portions de réseaux effectivement connectées
+      déclinées par chemin
+    - connexions actives : connexions associées à des clients actifs,
+      déclinées par les identifiants des sommets associés aux clients
+    - fonctions de traitement :
+      - initialisation de la connexion
+      - réception d'un message
+      - fermeture de la connexion

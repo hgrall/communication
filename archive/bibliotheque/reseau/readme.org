@@ -1,0 +1,41 @@
+- Validé le 16 mars 2018
+- TODO
+  - Tests
+
+Par réseau, on entend le réseau utilisé dans le jeu. 
+
+* noeuds et réseaux
+
+Définition d'un réseau
+
+- réseau ::= noeud*
+- noeud ::= (sommet, sommet*)
+- sommet ::= {identifiant, ...}
+
+- Un noeud n'agrège pas ses noeuds voisins pour éviter la découverte complète du réseau. 
+
+- TODO à commenter
+
+* Renommage et commentaires
+
+Fait :
+- noeuds 
+- formats
+- reseaux
+
+* TODO formats
+
+Définition des données échangées 
+- trois types 
+  - configuration
+  - message
+  - erreur rédhibitoire
+
+- TODO à commenter
+
+* Architecture d'une application
+
+- Serveur : agrégation d'un réseau
+- Client : agrégation d'un noeud du réseau 
+
+
