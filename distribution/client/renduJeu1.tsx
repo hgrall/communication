@@ -5,11 +5,11 @@ import Scrollbars from "react-custom-scrollbars";
 
 
 import styled from "styled-components";
-import { injectGlobal } from "styled-components";
+import { createGlobalStyle } from "styled-components";
 
 import { Corps } from "./corps";
 
-injectGlobal`
+createGlobalStyle`
     * { 
         margin: 0; 
         padding: 0; 

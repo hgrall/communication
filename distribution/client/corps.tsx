@@ -124,7 +124,9 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
       etatInterface: EtatInterfaceJeu1.INITIAL,
       selection: this.domaineInconnu,
       informations: [],
+      // @ts-ignore
       formulaireMessage: rienOption().val(),
+      // @ts-ignore
       formulaireEssai: rienOption().val(),
     };
     this.modifierSelection = this.modifierSelection.bind(this);
@@ -295,12 +297,14 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
 
   retirerFormulaireMessage(): void {
     this.setState({
+      // @ts-ignore
       formulaireMessage: rienOption().val()
     });
   }
 
   retirerFormulaireEssai(): void {
     this.setState({
+      // @ts-ignore
       formulaireEssai: rienOption().val()
     });
   }
