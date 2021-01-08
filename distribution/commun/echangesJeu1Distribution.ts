@@ -44,24 +44,6 @@ import { Mot, mot } from '../../bibliotheque/types/binaire';
 import { Option } from "../../bibliotheque/types/option";
 
 /**
- * Port égal :
- * - soit à celui attribué par l'environnement Heroku,
- * - soit à 8081 en local.
- */
-
-function calculPort() : number{
-    try{
-      return Number(process.env.PORT) || 8081;
-    }catch(e){
-      return 8081;
-    }
-} 
-
-export const port: number = calculPort();
-
-
-
-/**
  * Sommet inconnu : identifiant indéfini utilisé dans des messages définis
  * partiellement.
  */

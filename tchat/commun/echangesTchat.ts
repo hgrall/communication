@@ -32,24 +32,6 @@ import {
 } from "../../bibliotheque/types/identifiant";
 import { FormatTableIdentification } from "../../bibliotheque/types/tableIdentification";
 
-
-
-/**
- * Port égal :
- * - soit à celui attribué par l'environnement Heroku,
- * - soit à 8081 en local.
- */
-
-function calculPort() : number{
-    try{
-      return Number(process.env.PORT) || 8081;
-    }catch(e){
-      return 8081;
-    }
-} 
-
-export const port: number = calculPort(); 
-
 /**
  * Format JSON pour un sommet du réseau de tchat.
  * Structure :

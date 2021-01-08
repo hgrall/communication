@@ -32,7 +32,6 @@ import {
 import { CanalClientServeur, creerCanalClient } from "../../bibliotheque/communication/client";
 
 import {
-  port,
   NoeudTchat, noeudTchat,
   SommetTchatParEnveloppe, sommetTchat,
   messageCommunication,
