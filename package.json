@@ -4,7 +4,7 @@
   "description": "Jeu de distribution de messages avec adressage et routage.",
   "main": "webpack.config.js",
   "engines": {
-    "node": "6.11.4"
+    "node": "14.13.1"
   },
   "scripts": {
     "tsc": "tsc",
