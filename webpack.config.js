@@ -1,3 +1,4 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 var config = {
     entry: {
         tchatReact: "./build/tchat/client/renduTchat.js",
@@ -5,7 +6,8 @@ var config = {
     }, // Les clés remplacent name ci-dessous.
     output: {
         path: __dirname + "/build",
-        filename: "[name].client.js"
+        filename: "[name].client.js",
+        publicPath: "/"
     },
     // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
@@ -21,7 +23,21 @@ var config = {
             // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
             { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
         ]
-    }
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            title: 'Tchat v1',
+            template: 'site/interfaceTemplate.html',
+            filename: "interfaceTchat.html",
+            chunks: ['tchatReact']
+        }),
+        new HtmlWebpackPlugin({
+            title: 'Jeu 1 v0',
+            template: 'site/interfaceTemplate.html',
+            filename: "interfaceJeu1Distribution.html",
+            chunks: ['distributionReact']
+        })
+    ]
 };
 
 module.exports = config;
