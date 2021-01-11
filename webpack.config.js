@@ -26,8 +26,15 @@ var config = {
     plugins: [
         new HtmlWebpackPlugin({
             title: 'Tchat v1',
-            // Load a custom template (lodash by default)
-            template: 'site/interfaceTchat.html'
+            template: 'site/interfaceTchat.html',
+            filename: "interfaceTchat.html",
+            inject: false
+        }),
+        new HtmlWebpackPlugin({
+            title: 'Jeu 1 v0',
+            template: 'site/interfaceJeu1Distribution.html',
+            filename: "interfaceJeu1Distribution.html",
+            inject: false
         })
     ]
 };

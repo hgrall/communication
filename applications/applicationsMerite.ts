@@ -50,7 +50,7 @@ const cheminsTchat: { [chemin: string]: FormeReseau } = {
 };
 
 
-const ressourceTchat = "../site/interfaceTchat.html";
+const ressourceTchat = "interfaceTchat.html";
 
 for (let ch in cheminsTchat) {
     serveurApplisMerite.specifierRessourceAServir(
@@ -59,14 +59,14 @@ for (let ch in cheminsTchat) {
 }
 
 const cheminJeu1 = "/jeu1/distribution0";
-const ressourceJeu1 = "../site/interfaceJeu1Distribution.html";
+const ressourceJeu1 = "interfaceJeu1Distribution.html";
 
 serveurApplisMerite.specifierRessourceAServir(
     cheminJeu1, repertoireHtml, ressourceJeu1
 );
 
 const cheminAdminJeu1 = "/jeu1/distribution0/admin";
-const ressourceAdminJeu1 = "../site/interfaceAdminJeu1Distribution.html";
+const ressourceAdminJeu1 = "interfaceAdminJeu1Distribution.html";
 
 serveurApplisMerite.specifierRessourceAServir(
     cheminAdminJeu1, repertoireHtml, ressourceAdminJeu1
