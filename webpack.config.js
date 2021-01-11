@@ -6,7 +6,8 @@ var config = {
     }, // Les clés remplacent name ci-dessous.
     output: {
         path: __dirname + "/build",
-        filename: "[name].client.js"
+        filename: "[name].client.js",
+        publicPath: "/"
     },
     // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
@@ -26,15 +27,15 @@ var config = {
     plugins: [
         new HtmlWebpackPlugin({
             title: 'Tchat v1',
-            template: 'site/interfaceTchat.html',
+            template: 'site/interfaceTemplate.html',
             filename: "interfaceTchat.html",
-            inject: false
+            chunks: ['tchatReact']
         }),
         new HtmlWebpackPlugin({
             title: 'Jeu 1 v0',
-            template: 'site/interfaceJeu1Distribution.html',
+            template: 'site/interfaceTemplate.html',
             filename: "interfaceJeu1Distribution.html",
-            inject: false
+            chunks: ['distributionReact']
         })
     ]
 };
