@@ -1,3 +1,4 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 var config = {
     entry: {
         tchatReact: "./build/tchat/client/renduTchat.js",
@@ -21,7 +22,14 @@ var config = {
             // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
             { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
         ]
-    }
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            title: 'Tchat v1',
+            // Load a custom template (lodash by default)
+            template: 'site/interfaceTchat.html'
+        })
+    ]
 };
 
 module.exports = config;
