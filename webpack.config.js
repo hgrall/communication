@@ -2,7 +2,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 var config = {
     entry: {
         tchatReact: "./build/tchat/client/renduTchat.js",
-        distributionReact: "./build/distribution/client/renduJeu1.js"
+        distributionReact: "./build/distribution/client/renduJeu1.js",
+        accueilReact: "./build/accueil/renduAccueil.js"
     }, // Les clés remplacent name ci-dessous.
     output: {
         path: __dirname + "/build",
@@ -36,6 +37,12 @@ var config = {
             template: 'site/interfaceTemplate.html',
             filename: "interfaceJeu1Distribution.html",
             chunks: ['distributionReact']
+        }),
+        new HtmlWebpackPlugin({
+            title: 'Accueil',
+            template: 'site/interfaceTemplate.html',
+            filename: "interfaceAccueil.html",
+            chunks: ['accueilReact']
         })
     ]
 };

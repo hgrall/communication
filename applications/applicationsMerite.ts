@@ -72,6 +72,14 @@ serveurApplisMerite.specifierRessourceAServir(
     cheminAdminJeu1, repertoireHtml, ressourceAdminJeu1
 );
 
+// Accueil
+const cheminAccueil = "/";
+const ressourceAccueil = "interfaceAccueil.html";
+
+serveurApplisMerite.specifierRessourceAServir(
+    cheminAccueil, repertoireHtml, ressourceAccueil
+);
+
 const aiguilleur = new AiguilleurWebSocket(serveurApplisMerite);
 
 aiguilleur.demarrer();
