@@ -70,12 +70,27 @@ const Button = styled.button`
   }
 `;
 
+const BackButton = styled(Button)`
+  background: #050a4d;
+  :hover {
+    background: #02063b;
+  }
+`;
+
 const Title = styled.h2`
   font-weight: normal;
   color: #2a2a29;
   // text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1);
   text-align: center;
 `;
+
+const Hr = styled.hr`
+  border-top: 1px solid #bbb;
+  max-width: 380px;
+  margin-top: 10px;
+  width: 100%;
+`;
+
 
 interface AccessPageProps {
     onClick: (code: string | undefined) => void | undefined,
@@ -95,7 +110,11 @@ function AccessPage(props: AccessPageProps) {
     );
 }
 
-function JeuChoixPage() {
+interface JeuChoixPageProps {
+    goBack: () => void,
+}
+
+function JeuChoixPage(props: JeuChoixPageProps) {
     const domain = document.location.origin; // local retourne : http://localhost:8081
     const lienEtoile = domain + "/tchat/etoile0";
     const lienAnneau = domain + "/tchat/anneau0";
@@ -112,6 +131,10 @@ function JeuChoixPage() {
             </Form>
             <Form action={lienJeu1}>
                 <Button type="submit">Distribution</Button>
+            </Form>
+            <Hr/>
+            <Form>
+                <BackButton type="submit" onClick={props.goBack}>Changer le code d'accès</BackButton>
             </Form>
         </Wrapper>
     );
@@ -136,6 +159,10 @@ export class Corps extends React.Component<{}, AccueilState> {
             alert("Ce code n'est pas valide !");
     }
 
+    goBackAccessPage() {
+        this.setState({hasCode: false});
+    }
+
     render() {
         if (!this.state.hasCode) // demander code d'accès
             return (
@@ -143,7 +170,7 @@ export class Corps extends React.Component<{}, AccueilState> {
             );
         else // code valide fourni, afficher les choix des jeux
             return (
-                <JeuChoixPage/>
+                <JeuChoixPage goBack={this.goBackAccessPage}/>
             );
     }
 }
