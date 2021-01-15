@@ -9,7 +9,7 @@ import { createGlobalStyle } from "styled-components";
 
 import { Corps } from "./corps";
 
-createGlobalStyle`
+const GlobalStyle = createGlobalStyle`
     * { 
         margin: 0; 
         padding: 0; 
@@ -19,7 +19,7 @@ createGlobalStyle`
 `;
 
 ReactDOM.render(
-    <Corps />,
+    <><Corps/><GlobalStyle/></>,
     document.getElementById("conteneur")
 );
 

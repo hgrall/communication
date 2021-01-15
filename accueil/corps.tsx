@@ -100,6 +100,7 @@ function AccessPage(props: AccessPageProps) {
     const [code, setCode] = useState<string>();
     return (
         <Wrapper>
+            <h1>{process.env.CODES}</h1>
             <Title>Code d'accès :</Title>
             <Form>
                 <Input type="text" onChange={e => setCode(e.target.value)}/>
@@ -112,13 +113,15 @@ function AccessPage(props: AccessPageProps) {
 
 interface JeuChoixPageProps {
     goBack: () => void,
+    code: string
 }
 
 function JeuChoixPage(props: JeuChoixPageProps) {
     const domain = document.location.origin; // local retourne : http://localhost:8081
-    const lienEtoile = domain + "/tchat/etoile0";
-    const lienAnneau = domain + "/tchat/anneau0";
-    const lienJeu1 = domain + "/jeu1/distribution0";
+    const codeQuery = "?code=" + props.code;
+    const lienEtoile = domain + "/tchat/etoile0" + codeQuery;
+    const lienAnneau = domain + "/tchat/anneau0"+ codeQuery;
+    const lienJeu1 = domain + "/jeu1/distribution0"+ codeQuery;
 
     return (
         <Wrapper>
@@ -142,25 +145,29 @@ function JeuChoixPage(props: JeuChoixPageProps) {
 
 interface AccueilState {
     hasCode: boolean,
+    code: string,
 }
 
 export class Corps extends React.Component<{}, AccueilState> {
     constructor(props: {}) {
         super(props);
         this.state = {
-            hasCode: false,
+            hasCode: false, //aCode
+            code: "",
         };
     }
 
     handleSubmit(code: string) {
+        console.log(typeof process.env.CODES);
+        console.log(process.env.CODES);
         if (codesValides.includes(code))
-            this.setState({hasCode: true});
+            this.setState({hasCode: true, code: code});
         else
             alert("Ce code n'est pas valide !");
     }
 
     goBackAccessPage() {
-        this.setState({hasCode: false});
+        this.setState({hasCode: false, code: ""});
     }
 
     render() {
@@ -170,7 +177,7 @@ export class Corps extends React.Component<{}, AccueilState> {
             );
         else // code valide fourni, afficher les choix des jeux
             return (
-                <JeuChoixPage goBack={this.goBackAccessPage}/>
+                <JeuChoixPage goBack={this.goBackAccessPage} code={this.state.code}/>
             );
     }
 }
