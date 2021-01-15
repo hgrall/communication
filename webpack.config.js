@@ -1,11 +1,11 @@
-// const dotenv = require('dotenv')
-// const webpack = require('webpack');
+const dotenv = require('dotenv')
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-// const env = dotenv.config().parsed;
-// const envKeys = Object.keys(env).reduce((prev, next) => {
-//     prev[`process.env.${next}`] = JSON.parse(env[next]);
-//     return prev;
-// }, {});
+const env = dotenv.config().parsed;
+const envKeys = Object.keys(env).reduce((prev, next) => {
+    prev[`process.env.${next}`] = JSON.stringify(env[next]);
+    return prev;
+}, {});
 var config = {
     entry: {
         tchatReact: "./build/tchat/client/renduTchat.js",
@@ -50,8 +50,8 @@ var config = {
             template: 'site/interfaceTemplate.html',
             filename: "interfaceAccueil.html",
             chunks: ['accueilReact']
-        })
-        // new webpack.DefinePlugin(envKeys)
+        }),
+        new webpack.DefinePlugin(envKeys)
     ]
 };
 
