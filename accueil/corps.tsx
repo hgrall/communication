@@ -115,22 +115,22 @@ interface JeuChoixPageProps {
 
 function JeuChoixPage(props: JeuChoixPageProps) {
     const domain = document.location.origin; // local retourne : http://localhost:8081
-    const codeQuery = "?code=" + props.code;
-    const lienEtoile = domain + "/tchat/etoile0" + codeQuery;
-    const lienAnneau = domain + "/tchat/anneau0"+ codeQuery;
-    const lienJeu1 = domain + "/jeu1/distribution0"+ codeQuery;
+    const lienEtoile = domain + "/tchat/etoile0";
+    const lienAnneau = domain + "/tchat/anneau0";
+    const lienJeu1 = domain + "/jeu1/distribution0";
+    console.log(lienEtoile)
 
     return (
         <Wrapper>
             <Title>Quel jeu vous voulez jouer ?</Title>
             <Form action={lienEtoile}>
-                <Button type="submit">Tchat Etoile</Button>
+                <Button type="submit" name="code" value={props.code}>Tchat Etoile</Button>
             </Form>
             <Form action={lienAnneau}>
-                <Button type="submit">Tchat Anneau</Button>
+                <Button type="submit" name="code" value={props.code}>Tchat Anneau</Button>
             </Form>
             <Form action={lienJeu1}>
-                <Button type="submit">Distribution</Button>
+                <Button type="submit" name="code" value={props.code}>Distribution</Button>
             </Form>
             <Hr/>
             <Form>
