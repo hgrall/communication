@@ -393,7 +393,9 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
                 chemin = "";
             }
 
-            const codesValides = ["A1", "B2", "C3"]; // provisoire
+            let codesValides = ["A1", "B2", "C3"]; // provisoire
+            if (process.env.CODES != null)
+                codesValides = process.env.CODES.split(",");
             // @ts-ignore
             if (req.resourceURL.query != null && req.resourceURL.query.code != null) {
                 // @ts-ignore

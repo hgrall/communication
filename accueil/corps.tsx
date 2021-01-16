@@ -2,8 +2,6 @@ import * as React from "react";
 import styled, {keyframes} from "styled-components";
 import {useState} from "react";
 
-const codesValides = ["A1", "B2", "C3"]; // provisoire
-
 const Wrapper = styled.section`
   display: flex;
   flex-direction: column;
@@ -100,7 +98,6 @@ function AccessPage(props: AccessPageProps) {
     const [code, setCode] = useState<string>();
     return (
         <Wrapper>
-            <h1>{process.env.CODES}</h1>
             <Title>Code d'accès :</Title>
             <Form>
                 <Input type="text" onChange={e => setCode(e.target.value)}/>
@@ -158,8 +155,10 @@ export class Corps extends React.Component<{}, AccueilState> {
     }
 
     handleSubmit(code: string) {
-        console.log(typeof process.env.CODES);
-        console.log(process.env.CODES);
+        let codesValides = ["A1", "B2", "C3"]; // provisoire
+        if (process.env.CODES != null)
+            codesValides = process.env.CODES.split(",");
+
         if (codesValides.includes(code))
             this.setState({hasCode: true, code: code});
         else
