@@ -17,8 +17,13 @@
 ```
     node build/applications/applicationsMerite.js
 
-    navigateur : http://localhost:8081/tchat/etoile0
+    navigateur : http://localhost:8081/
 ```
+
+- chemins
+  - / : accueil
+  - tchat/etoile0
+  - TODO etc.
 
 Deux applications disponibles : ```tchat``` et ```jeu1```
 - ```tchat/etoileN``` (```N``` entre 0 et 4)
