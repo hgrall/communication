@@ -113,7 +113,6 @@ for (let ch in cheminsTchat) {
     const serveurCanauxTchat
         = new ServeurCanauxTchat(
             ch, aiguilleur, cheminsTchat[ch], noms, prefixe);
-    serveurCanauxTchat.initialiser();
 }
 
 
@@ -123,18 +122,9 @@ for (let ch in cheminsTchat) {
  *************************
  */
 
-
-
-/**
- * Nombre d'utilisateurs pour le jeu 1.
- */
-const nombreUtilisateurs: number = 15;
-const prefixeDom = "DOM0-"
-
 const serveurCanauxJeu1
     = new ServeurCanauxJeu1Distribution(
-        cheminJeu1, aiguilleur, nombreUtilisateurs, prefixeDom);
-serveurCanauxJeu1.initialiser();
+        cheminJeu1, aiguilleur);
 
 /*
  * Administration programmatique au lieu d'admin interactive.

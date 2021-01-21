@@ -297,6 +297,12 @@ export class ServeurCanauxTchat<S extends ServeurApplications>
             chemin, connexion, adresseIPClient);
     }
 
+    preInit(
+        chemin: string,
+        nombreUtilisateurs: number,
+        prefixeIdDom: string
+    ) {}
+
     /**
      * Administre le serveur de canaux de tchat. TODO
      */
