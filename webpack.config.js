@@ -47,7 +47,9 @@ var config = {
             filename: "interfaceAccueil.html",
             chunks: ['accueilReact']
         }),
-        new dotEnv({systemvars: true})
+        new dotEnv({
+            systemvars: true // privilégier les variables d'environnement (Heroku's config vars), pas un fichier .env
+        })
     ]
 };
 

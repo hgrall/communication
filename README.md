@@ -80,4 +80,5 @@ Webpack est un groupeur de modules (module bundler) JavaScript open source. Il p
 
 Dans ce projet, le plugin [HTML Webpack Plugin](https://github.com/jantimon/html-webpack-plugin) est utilisé pour créer les fichiers HTML. Pendant le build, le plugin utilise le template HTML sur le dossier */site* et les configurations sur webpack.config.ts pour créer les fichiers HTML qui sont ensuite deposés sur */build*.
 
+Le plugin [dotenv-webpack](https://github.com/mrsteele/dotenv-webpack) est utilisé pour la lecture des variables d'environnement, les codes d'accès sont inclus dans ce cas. Dans Heroku, ces variables sont appelés Config Vars et peuvent être modifiés dans l'onglet "Settings". Du côté client, les variables sont définies pendant le build et, du côté serveur, pendant l'exécution (runtime). Il faut réinitialiser l'application pour appliquer les modifications des variables dans le client. La lecture peut aussi se faire à partir d'un fichier .env dans la racine.
 # guide de l'utilisateur

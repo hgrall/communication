@@ -23,3 +23,11 @@ Prise en main du projet :
 La tâche 2 a été choisie pour cette semaine.
 - Création d'une application Heroku de test.
 - Ajoute du plugin HTML Webpack pour création des fichiers HTML pendant le build.
+- Création d'une page d'accueil (chemin : /)
+    - Page initiale demande un code d'accès.
+    - Deuxième page présente les options des jeux .
+    
+## Semaine 3 (18/01)
+Continuation et corrections de la tâche 2.
+- Codes d'accès : fichier .env ou variable d'environnement (config var dans Heroku).
+- Code d'accès comme paramètre obligatoire dans le chemin pour accéder aux serveurs.
