@@ -2,8 +2,6 @@ import * as React from "react";
 import styled, {keyframes} from "styled-components";
 import {useState} from "react";
 
-const codesValides = ["A1", "B2", "C3"]; // provisoire
-
 const Wrapper = styled.section`
   display: flex;
   flex-direction: column;
@@ -112,6 +110,7 @@ function AccessPage(props: AccessPageProps) {
 
 interface JeuChoixPageProps {
     goBack: () => void,
+    code: string
 }
 
 function JeuChoixPage(props: JeuChoixPageProps) {
@@ -119,18 +118,19 @@ function JeuChoixPage(props: JeuChoixPageProps) {
     const lienEtoile = domain + "/tchat/etoile0";
     const lienAnneau = domain + "/tchat/anneau0";
     const lienJeu1 = domain + "/jeu1/distribution0";
+    console.log(lienEtoile)
 
     return (
         <Wrapper>
             <Title>Quel jeu vous voulez jouer ?</Title>
             <Form action={lienEtoile}>
-                <Button type="submit">Tchat Etoile</Button>
+                <Button type="submit" name="code" value={props.code}>Tchat Etoile</Button>
             </Form>
             <Form action={lienAnneau}>
-                <Button type="submit">Tchat Anneau</Button>
+                <Button type="submit" name="code" value={props.code}>Tchat Anneau</Button>
             </Form>
             <Form action={lienJeu1}>
-                <Button type="submit">Distribution</Button>
+                <Button type="submit" name="code" value={props.code}>Distribution</Button>
             </Form>
             <Hr/>
             <Form>
@@ -142,25 +142,31 @@ function JeuChoixPage(props: JeuChoixPageProps) {
 
 interface AccueilState {
     hasCode: boolean,
+    code: string,
 }
 
 export class Corps extends React.Component<{}, AccueilState> {
     constructor(props: {}) {
         super(props);
         this.state = {
-            hasCode: false,
+            hasCode: false, //aCode
+            code: "",
         };
     }
 
     handleSubmit(code: string) {
+        let codesValides = ["A1", "B2", "C3"]; // provisoire
+        if (process.env.CODES != null)
+            codesValides = process.env.CODES.split(",");
+
         if (codesValides.includes(code))
-            this.setState({hasCode: true});
+            this.setState({hasCode: true, code: code});
         else
             alert("Ce code n'est pas valide !");
     }
 
     goBackAccessPage() {
-        this.setState({hasCode: false});
+        this.setState({hasCode: false, code: ""});
     }
 
     render() {
@@ -170,7 +176,7 @@ export class Corps extends React.Component<{}, AccueilState> {
             );
         else // code valide fourni, afficher les choix des jeux
             return (
-                <JeuChoixPage goBack={this.goBackAccessPage}/>
+                <JeuChoixPage goBack={this.goBackAccessPage} code={this.state.code}/>
             );
     }
 }

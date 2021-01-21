@@ -392,6 +392,22 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
             } else {
                 chemin = "";
             }
+
+            let codesValides = ["A1", "B2", "C3"]; // provisoire
+            if (process.env.CODES != null)
+                codesValides = process.env.CODES.split(",");
+            // @ts-ignore
+            if (req.resourceURL.query != null && req.resourceURL.query.code != null) {
+                // @ts-ignore
+                if (!codesValides.includes(req.resourceURL.query.code)) {
+                    req.reject(401, "Code d'accès invalide.");
+                    return;
+                }
+            } else {
+                req.reject(403, "Code d'accès absent.");
+                return;
+            }
+
             if (!cetAiguilleur.aiguillageServeursCanaux.contient(chemin)) {
                 req.reject(404, "Web Socket - requête rejetée : chemin non valide.");
             } else {
