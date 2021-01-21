@@ -645,17 +645,28 @@ export class ServeurCanauxJeu1Distribution<S extends ServeurApplications>
      */
     constructor(
         chemin: string,
-        aiguilleur: AiguilleurWebSocket<S>,
-        private nombreUtilisateurs: number,
-        private prefixeIdDom: string
+        aiguilleur: AiguilleurWebSocket<S>
     ) {
         super(chemin, aiguilleur);
+    }
+
+    /**
+     * Configuration du serveur de canaux avant l'initialisation.
+     * @param chemin
+     * @param nombreUtilisateurs
+     * @param prefixeIdDom
+     */
+    preInit(
+        chemin: string,
+        nombreUtilisateurs: number,
+        prefixeIdDom: string
+    ) {
         let effectifs = new Array<number>(nombreDomaines);
-        let d = divEuclidienne(this.nombreUtilisateurs, nombreDomaines);
+        let d = divEuclidienne(nombreUtilisateurs, nombreDomaines);
         for (let j = 0; j < nombreDomaines; j++) {
             effectifs[j] = d.quotient + ((j < d.reste) ? 1 : 0);
         }
-        const configServeur = creerConfigurationServeur(nombreDomaines, this.prefixeIdDom);
+        const configServeur = creerConfigurationServeur(nombreDomaines, prefixeIdDom);
         configServeur.engendrerPopulations(effectifs);
         configServeur.engendrerConsignes();
         this.configuration = configServeur;
@@ -669,7 +680,7 @@ export class ServeurCanauxJeu1Distribution<S extends ServeurApplications>
         this._connexions =
             creerTableIdentificationMutableVide<
                 'utilisateur', CanalJeu1Distribution, CanalJeu1Distribution>(
-                    'utilisateur', (x) => x);
+                'utilisateur', (x) => x);
         this.generateur = creerIdentificationParCompteur(
             chemin + "/MSG-");
         this.autorisationsVerrouillage
@@ -677,6 +688,7 @@ export class ServeurCanauxJeu1Distribution<S extends ServeurApplications>
         this.verrous
             = creerTableIdentificationMutableVide("message", (x) => x.val());
     }
+
     /**
      * Fabrique un canal à partir des arguments passés et en transmettant
      * l'aiguilleur.

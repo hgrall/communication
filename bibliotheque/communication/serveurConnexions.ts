@@ -268,6 +268,11 @@ export interface ServeurCanaux<TC> {
      * Initialise le canal.
      */
     initialiser() : void;
+    preInit(
+        chemin: string,
+        nombreUtilisateurs: number,
+        prefixeIdDom: string
+    ) : void;
 }
 
 export abstract class ServeurAbstraitCanaux<S extends ServeurApplications, TC>
@@ -287,6 +292,11 @@ export abstract class ServeurAbstraitCanaux<S extends ServeurApplications, TC>
      * Initialise le canal.
      */
     abstract initialiser() : void;
+    abstract preInit(
+        chemin: string,
+        nombreUtilisateurs: number,
+        prefixeIdDom: string
+    ) : void;
 }
 
 /**
@@ -323,7 +333,8 @@ export interface Aiguilleur<S extends ServeurApplications, TC> {
     traiterRequeteInitiale(
         chemin: string,
         connexion: TC,
-        adresseIPClient: string
+        adresseIPClient: string,
+        nombreUtilisateurs: number
     ): void
 }
 
@@ -393,6 +404,8 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
                 chemin = "";
             }
 
+            // Verification du code d'accès
+            let nombreUtilisateurs = 0; // pour le jeu1 distribution
             let codesValides = ["A1", "B2", "C3"]; // provisoire
             if (process.env.CODES != null)
                 codesValides = process.env.CODES.split(",");
@@ -402,6 +415,11 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
                 if (!codesValides.includes(req.resourceURL.query.code)) {
                     req.reject(401, "Code d'accès invalide.");
                     return;
+                } else {
+                    // code valide, extraire le nombre d'utilisateurs
+                    // @ts-ignore
+                    nombreUtilisateurs = +req.resourceURL.query.code.replace( /^\D+/g, '');
+                    console.log("# nombreUtilisateurs : "+nombreUtilisateurs);
                 }
             } else {
                 req.reject(403, "Code d'accès absent.");
@@ -413,7 +431,7 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
             } else {
                 let connexion = req.accept('echo-protocol', req.origin);
                 let adresseIPClient = req.remoteAddress;
-                this.traiterRequeteInitiale(chemin, connexion, adresseIPClient);
+                this.traiterRequeteInitiale(chemin, connexion, adresseIPClient, nombreUtilisateurs);
             }
         });
 
@@ -432,13 +450,25 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
     traiterRequeteInitiale(
         chemin: string,
         connexion: websocket.connection,
-        adresseIPClient: string): void {
+        adresseIPClient: string,
+        nombreUtilisateurs: number): void {
+        // Pour le jeu1 (distribution), il faut pré initialiser
+        if (chemin.indexOf("jeu1") >= 0) {
+            console.log("jeu1");
+            const cheminJeu1 = "/jeu1/distribution0";
+            const prefixeDom = "DOM0-";
+            this.aiguillageServeursCanaux.valeur(chemin).preInit(cheminJeu1, nombreUtilisateurs, prefixeDom);
+        }
+
+        // Initialiser, créer le canal et traiter la connexion
+        this.aiguillageServeursCanaux.valeur(chemin).initialiser();
         let l = this.aiguillageServeursCanaux.valeur(chemin).creerCanal(
             chemin, connexion, adresseIPClient);
         let estConnecte = l.traiterConnexion();
         if (!estConnecte) {
             return;
         }
+
         // Enregistre le traitement des messages
         l.enregistrerTraitementMessages();
         // Enregistre le traitement de la fermeture de la connexion
