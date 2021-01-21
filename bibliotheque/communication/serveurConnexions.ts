@@ -401,13 +401,11 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
                 // @ts-ignore
                 if (!codesValides.includes(req.resourceURL.query.code)) {
                     req.reject(401, "Code d'accès invalide.");
+                    return;
                 }
             } else {
-                try {
-                    req.reject(403, "Code d'accès absent.");
-                } catch (e) {
-                    console.log("ERROR")
-                }
+                req.reject(403, "Code d'accès absent.");
+                return;
             }
 
             if (!cetAiguilleur.aiguillageServeursCanaux.contient(chemin)) {
