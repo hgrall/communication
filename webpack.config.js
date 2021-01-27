@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const dotEnv = require('dotenv-webpack')
+const CopyPlugin = require("copy-webpack-plugin");
 
 var config = {
     entry: {
@@ -47,7 +48,12 @@ var config = {
             filename: "interfaceAccueil.html",
             chunks: ['accueilReact']
         }),
-        new dotEnv({systemvars: true})
+        new dotEnv({systemvars: true}),
+        new CopyPlugin({
+            patterns: [
+                { from: "config.json" },
+            ],
+        }),
     ]
 };
 

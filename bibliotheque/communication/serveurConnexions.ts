@@ -7,6 +7,8 @@
 import * as http from 'http';
 import * as websocket from 'websocket';
 
+const CONFIG = require('../../config.json');
+
 import { creerTableMutableVide, TableMutable } from "../types/table";
 
 import {
@@ -412,13 +414,19 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
             // @ts-ignore
             if (req.resourceURL.query != null && req.resourceURL.query.code != null) {
                 // @ts-ignore
-                if (!codesValides.includes(req.resourceURL.query.code)) {
+                let code = req.resourceURL.query.code
+                if (!codesValides.includes(code)) {
                     req.reject(401, "Code d'accès invalide.");
                     return;
                 } else {
                     // code valide, extraire le nombre d'utilisateurs
-                    // @ts-ignore
-                    nombreUtilisateurs = +req.resourceURL.query.code.replace( /^\D+/g, '');
+                    let sumAscii = code.split("").reduce((acc: number, val: string) => {
+                        return acc + val.charCodeAt(0);
+                    }, 0);
+                    if (CONFIG[sumAscii.toString()])
+                        nombreUtilisateurs = CONFIG[sumAscii.toString()].nombreUtilisateurs;
+                    else
+                        nombreUtilisateurs = 15;
                     console.log("# nombreUtilisateurs : "+nombreUtilisateurs);
                 }
             } else {
