@@ -16,7 +16,8 @@ import {
 } from "../reseau/formats";
 
 import { ServeurApplications } from './serveurApplications';
-import {obtenirConfig, obtenirConfigCodeChiffre, verifierCodedAcces} from "./securite";
+import {obtenirConfig, verifierCodedAcces} from "./securite";
+import {MAX_ECOLES} from "../../applications/applicationsMerite";
 
 /**
  * Configurateur d'un canal entre le client et le serveur.
@@ -335,7 +336,8 @@ export interface Aiguilleur<S extends ServeurApplications, TC> {
         chemin: string,
         connexion: TC,
         adresseIPClient: string,
-        nombreUtilisateurs: number
+        nombreUtilisateurs: number,
+        initialise: boolean
     ): void
 }
 
@@ -347,6 +349,13 @@ export interface Aiguilleur<S extends ServeurApplications, TC> {
 export class AiguilleurWebSocket<S extends ServeurApplications>
     implements Aiguilleur<S, websocket.connection>
 {
+    /**
+     * Association du code d'accès à un identifiant école (de 0 à MAX_ECOLES).
+     * Contrôle pour initialiser les serveurs canaux juste une fois.
+     * */
+    private ecoleAssocieAuCode: string[] = [];
+    private serveursInitialises: string[] = [];
+
     /**
      * Table réalisant l'aiguillage, associant à un chemin un serveur de canaux.
      */
@@ -416,15 +425,54 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
                 return;
             }
 
+            // Modification de chemin selon école associé au code d'accès
+            let initialise: boolean;
+            // @ts-ignore
+            [chemin, initialise] = this.attribuerCheminEcole(req.resourceURL.query.code, chemin);
+            console.log("chemin :" + chemin + " ; initialisé : " + initialise);
+
             if (!cetAiguilleur.aiguillageServeursCanaux.contient(chemin)) {
                 req.reject(404, "Web Socket - requête rejetée : chemin non valide.");
             } else {
                 let connexion = req.accept('echo-protocol', req.origin);
                 let adresseIPClient = req.remoteAddress;
-                this.traiterRequeteInitiale(chemin, connexion, adresseIPClient, nombreUtilisateurs);
+                this.traiterRequeteInitiale(chemin, connexion, adresseIPClient, nombreUtilisateurs, initialise);
             }
         });
 
+    }
+
+    /**
+     * Obtient le chemin pour les serveurs canaux : ajout au chemin
+     * de l'identifiant école associé au code d'accès.
+     * L'identifiant école est un nombre entre 0 et MAX_ECOLES.
+     * Obtient aussi si le serveur est déjà initialisé ou pas.
+     * @param code code d'accès déjà validé
+     * @param le chemin relatif dans la requête HTTP
+     * */
+    attribuerCheminEcole(code: string, chemin: string): [string, boolean] {
+        let nouveauChemin = "";
+        let initialise = false;
+
+        if (this.ecoleAssocieAuCode.indexOf(code) >= 0) {
+            // école déjà présent
+            nouveauChemin = "/"+this.ecoleAssocieAuCode.indexOf(code)+chemin;
+            if (this.serveursInitialises.indexOf(nouveauChemin) >= 0)
+                initialise = true; // serveur canaux déjà initialisé
+            else {
+                initialise = false; // il faut initialiser le serveur
+                this.serveursInitialises.push(nouveauChemin)
+            }
+        } else if (this.ecoleAssocieAuCode.length < MAX_ECOLES) {
+            // ajouter une nouvelle école
+            nouveauChemin = "/" + this.ecoleAssocieAuCode.length + chemin;
+            this.ecoleAssocieAuCode.push(code);
+            // il faut initialiser le serveur
+            initialise = false;
+            this.serveursInitialises.push(nouveauChemin)
+        }
+
+        return [nouveauChemin, initialise];
     }
 
     /**
@@ -441,17 +489,21 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
         chemin: string,
         connexion: websocket.connection,
         adresseIPClient: string,
-        nombreUtilisateurs: number): void {
-        // Pour le jeu1 (distribution), il faut pré initialiser
-        if (chemin.indexOf("jeu1") >= 0) {
-            console.log("jeu1");
-            const cheminJeu1 = "/jeu1/distribution0";
-            const prefixeDom = "DOM0-";
-            this.aiguillageServeursCanaux.valeur(chemin).preInit(cheminJeu1, nombreUtilisateurs, prefixeDom);
+        nombreUtilisateurs: number,
+        initialise: boolean): void {
+
+        if (!initialise) {
+            // Pour le jeu1 (distribution), il faut pré initialiser
+            if (chemin.indexOf("jeu1") >= 0) {
+                const prefixeDom = "DOM0-"+chemin[1]; // ajoute l'identifiant école au préfixe
+                this.aiguillageServeursCanaux.valeur(chemin).preInit(chemin, nombreUtilisateurs, prefixeDom);
+            }
+
+            // Initialiser, créer le canal et traiter la connexion
+            console.log("*** initialiser ***");
+            this.aiguillageServeursCanaux.valeur(chemin).initialiser();
         }
 
-        // Initialiser, créer le canal et traiter la connexion
-        this.aiguillageServeursCanaux.valeur(chemin).initialiser();
         let l = this.aiguillageServeursCanaux.valeur(chemin).creerCanal(
             chemin, connexion, adresseIPClient);
         let estConnecte = l.traiterConnexion();
