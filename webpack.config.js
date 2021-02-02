@@ -12,7 +12,7 @@ var config = {
     output: {
         path: __dirname + "/build",
         filename: "[name].client.js",
-        publicPath: "/"
+        publicPath: "/" // added to the js name when injected in the HTML
     },
     // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
@@ -33,8 +33,8 @@ var config = {
         new HtmlWebpackPlugin({
             title: 'Tchat v1',
             template: 'site/interfaceTemplate.html',
-            filename: "interfaceTchat.html",
-            chunks: ['tchatReact']
+            filename: "interfaceTchat.html", // output file name
+            chunks: ['tchatReact'] // to inject in the body
         }),
         new HtmlWebpackPlugin({
             title: 'Jeu 1 v0',
@@ -48,7 +48,9 @@ var config = {
             filename: "interfaceAccueil.html",
             chunks: ['accueilReact']
         }),
-        new dotEnv({systemvars: true}),
+        new dotEnv({
+            systemvars: true // privilégier les variables d'environnement (Heroku's config vars), pas un fichier .env
+        }),
         new CopyPlugin({
             patterns: [
                 { from: "config.json" },
