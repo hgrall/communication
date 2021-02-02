@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const dotEnv = require('dotenv-webpack')
+const CopyPlugin = require("copy-webpack-plugin");
 
 var config = {
     entry: {
@@ -49,7 +50,12 @@ var config = {
         }),
         new dotEnv({
             systemvars: true // privilégier les variables d'environnement (Heroku's config vars), pas un fichier .env
-        })
+        }),
+        new CopyPlugin({
+            patterns: [
+                { from: "config.json" },
+            ],
+        }),
     ]
 };
 

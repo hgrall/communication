@@ -16,6 +16,7 @@ import {
 } from "../reseau/formats";
 
 import { ServeurApplications } from './serveurApplications';
+import {obtenirConfig, obtenirConfigCodeChiffre, verifierCodedAcces} from "./securite";
 
 /**
  * Configurateur d'un canal entre le client et le serveur.
@@ -405,24 +406,13 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
             }
 
             // Verification du code d'accès
-            let nombreUtilisateurs = 0; // pour le jeu1 distribution
-            let codesValides = ["A1", "B2", "C3"]; // provisoire
-            if (process.env.CODES != null)
-                codesValides = process.env.CODES.split(",");
-            // @ts-ignore
-            if (req.resourceURL.query != null && req.resourceURL.query.code != null) {
+            let nombreUtilisateurs: number;
+            if (verifierCodedAcces(req.resourceURL.query)) {
+                // Obtenir les configurations (nombre d'utilisateurs)
                 // @ts-ignore
-                if (!codesValides.includes(req.resourceURL.query.code)) {
-                    req.reject(401, "Code d'accès invalide.");
-                    return;
-                } else {
-                    // code valide, extraire le nombre d'utilisateurs
-                    // @ts-ignore
-                    nombreUtilisateurs = +req.resourceURL.query.code.replace( /^\D+/g, '');
-                    console.log("# nombreUtilisateurs : "+nombreUtilisateurs);
-                }
+                nombreUtilisateurs = obtenirConfig(req.resourceURL.query.code);
             } else {
-                req.reject(403, "Code d'accès absent.");
+                req.reject(401, "Code d'accès invalide.");
                 return;
             }
 
