@@ -7,8 +7,6 @@
 import * as http from 'http';
 import * as websocket from 'websocket';
 
-const CONFIG = require('../../config.json');
-
 import { creerTableMutableVide, TableMutable } from "../types/table";
 
 import {
@@ -18,6 +16,7 @@ import {
 } from "../reseau/formats";
 
 import { ServeurApplications } from './serveurApplications';
+import {obtenirConfig, obtenirConfigCodeChiffre, verifierCodedAcces} from "./securite";
 
 /**
  * Configurateur d'un canal entre le client et le serveur.
@@ -407,30 +406,13 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
             }
 
             // Verification du code d'accès
-            let nombreUtilisateurs = 0; // pour le jeu1 distribution
-            let codesValides = ["A1", "B2", "C3"]; // provisoire
-            if (process.env.CODES != null)
-                codesValides = process.env.CODES.split(",");
-            // @ts-ignore
-            if (req.resourceURL.query != null && req.resourceURL.query.code != null) {
+            let nombreUtilisateurs: number;
+            if (verifierCodedAcces(req.resourceURL.query)) {
+                // Obtenir les configurations (nombre d'utilisateurs)
                 // @ts-ignore
-                let code = req.resourceURL.query.code
-                if (!codesValides.includes(code)) {
-                    req.reject(401, "Code d'accès invalide.");
-                    return;
-                } else {
-                    // code valide, extraire le nombre d'utilisateurs
-                    let sumAscii = code.split("").reduce((acc: number, val: string) => {
-                        return acc + val.charCodeAt(0);
-                    }, 0);
-                    if (CONFIG[sumAscii.toString()])
-                        nombreUtilisateurs = CONFIG[sumAscii.toString()].nombreUtilisateurs;
-                    else
-                        nombreUtilisateurs = 15;
-                    console.log("# nombreUtilisateurs : "+nombreUtilisateurs);
-                }
+                nombreUtilisateurs = obtenirConfig(req.resourceURL.query.code);
             } else {
-                req.reject(403, "Code d'accès absent.");
+                req.reject(401, "Code d'accès invalide.");
                 return;
             }
 
