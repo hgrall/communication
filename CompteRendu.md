@@ -38,4 +38,9 @@ Tâche 3 :
     - Proposition d'utiliser des clés privées, chiffrement et fichiers de configurations.
 
 ## Semaine 4 (25/01)
+Extension tâche 3 :
+- Creation d'un fichier avec les configurations du jeu selon le code d'accès. La somme des codes ASCII de chaque character du code d'accès donne l'identifiant de la configuration à utiliser.
+- Ajout d'une autre option de chiffrement (RSA) pour les code d'accès (securite.ts).
+
+## Semaine 5 (01/02)
 La tâche 1 a été choisie pour cette semaine.
