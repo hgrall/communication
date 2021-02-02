@@ -95,25 +95,26 @@ aiguilleur.demarrer();
  * ont ces cinq utilisateurs.
  */
 const noms: ReadonlyArray<string> = ["dede", "fifi", "jojo", "lulu", "zaza"];
+export const MAX_ECOLES = 2;
 
 let etoiles = 0;
 let anneaux = 0;
-for (let ch in cheminsTchat) {
-    let prefixe = "";
-    switch (cheminsTchat[ch]) {
-        case FormeReseau.ANNEAU:
-            prefixe = "A" + anneaux + "-";
-            anneaux++;
-            break;
-        case FormeReseau.ETOILE:
-            prefixe = "E" + etoiles + "-";
-            etoiles++;
-            break;
+for (let ecole = 0; ecole < MAX_ECOLES; ecole++)
+    for (let ch in cheminsTchat) {
+        let prefixe = "";
+        switch (cheminsTchat[ch]) {
+            case FormeReseau.ANNEAU:
+                prefixe = "A" + ecole + anneaux + "-";
+                anneaux++;
+                break;
+            case FormeReseau.ETOILE:
+                prefixe = "E" + ecole + etoiles + "-";
+                etoiles++;
+                break;
+        }
+        new ServeurCanauxTchat(
+                "/"+ecole+ch, aiguilleur, cheminsTchat[ch], noms, prefixe);
     }
-    const serveurCanauxTchat
-        = new ServeurCanauxTchat(
-            ch, aiguilleur, cheminsTchat[ch], noms, prefixe);
-}
 
 
 /*
@@ -121,10 +122,9 @@ for (let ch in cheminsTchat) {
  * Jeu 1 de distribution *
  *************************
  */
-
-const serveurCanauxJeu1
-    = new ServeurCanauxJeu1Distribution(
-        cheminJeu1, aiguilleur);
+for (let ecole = 0; ecole < MAX_ECOLES; ecole++)
+    new ServeurCanauxJeu1Distribution(
+        "/"+ecole+cheminJeu1, aiguilleur);
 
 /*
  * Administration programmatique au lieu d'admin interactive.
