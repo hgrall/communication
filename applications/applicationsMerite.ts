@@ -80,6 +80,22 @@ serveurApplisMerite.specifierRessourceAServir(
     cheminAccueil, repertoireHtml, ressourceAccueil
 );
 
+// Admin
+const cheminAdmin = "/admin";
+const ressourceAdmin = "interfaceAdmin.html";
+
+serveurApplisMerite.specifierRessourceAServir(
+    cheminAdmin, repertoireHtml, ressourceAdmin
+);
+
+// Admin Log Server
+const cheminAdminLog = "/admin/logs";
+const ressourceAdminLog = "admin.log";
+
+serveurApplisMerite.specifierRessourceAServir(
+    cheminAdminLog, repertoireHtml, ressourceAdminLog
+);
+
 const aiguilleur = new AiguilleurWebSocket(serveurApplisMerite);
 
 aiguilleur.demarrer();

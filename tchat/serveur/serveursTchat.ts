@@ -54,6 +54,37 @@ import { dateMaintenant } from "../../bibliotheque/types/date"
  * - "reseauxConnectes" : portions de réseaux déjà connectées,
  * - "connexions" : connexions entre les clients et le serveur.
  */
+
+/**
+ * Création du log admin avec winston
+ * Redirige l'usage de console.info vers le fichier de log
+ * */
+let util = require('util'),
+    winston = require('winston'),
+    logger = winston.createLogger({
+        transports: [
+            new(winston.transports.Console)({
+                format: winston.format.simple(),
+            }),
+            new (winston.transports.File)({
+                filename: 'build/admin.log', // fichier de log pour l'interface admin
+                format: winston.format.simple(),
+            })
+        ],
+        exitOnError: false,
+    });
+
+function formatArgs(args: IArguments){
+    return [util.format.apply(util.format, Array.prototype.slice.call(args))];
+}
+
+console.info = function(){
+    logger.info.apply(logger, formatArgs(arguments));
+};
+
+/**
+ * CanalTchat
+ * */
 class CanalTchat extends CanalServeurClientWebSocket<
     FormatErreurTchat, EtiquetteErreurTchat,
     FormatConfigurationTchat, EtiquetteConfigurationTchat,
