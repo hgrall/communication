@@ -211,6 +211,7 @@ export abstract class CanalServeurClientWebSocket<
      * @param m message à envoyer.
      */
     envoyerAuClient(m: Message<FMsg, EtMsg>) {
+        console.info(m.representation()); // pour le log crée avec windsor, utilisé pour l'admin
         this.connexionReelle().sendUTF(m.brut());
     }
     /**
