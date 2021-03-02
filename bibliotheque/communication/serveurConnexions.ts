@@ -211,7 +211,7 @@ export abstract class CanalServeurClientWebSocket<
      * @param m message à envoyer.
      */
     envoyerAuClient(m: Message<FMsg, EtMsg>) {
-        console.info(m.representation()); // pour le log crée avec windsor, utilisé pour l'admin
+        console.info(m.representation()); // pour le log crée avec winston, utilisé pour l'admin
         this.connexionReelle().sendUTF(m.brut());
     }
     /**
@@ -454,10 +454,12 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
     attribuerCheminEcole(code: string, chemin: string): [string, boolean] {
         let nouveauChemin = "";
         let initialise = false;
+        let idEcole = -1;
 
         if (this.ecoleAssocieAuCode.indexOf(code) >= 0) {
             // école déjà présent
-            nouveauChemin = "/"+this.ecoleAssocieAuCode.indexOf(code)+chemin;
+            idEcole = this.ecoleAssocieAuCode.indexOf(code);
+            nouveauChemin = "/" + idEcole + chemin;
             if (this.serveursInitialises.indexOf(nouveauChemin) >= 0)
                 initialise = true; // serveur canaux déjà initialisé
             else {
@@ -466,12 +468,16 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
             }
         } else if (this.ecoleAssocieAuCode.length < MAX_ECOLES) {
             // ajouter une nouvelle école
-            nouveauChemin = "/" + this.ecoleAssocieAuCode.length + chemin;
+            idEcole = this.ecoleAssocieAuCode.length;
+            nouveauChemin = "/" + idEcole + chemin;
             this.ecoleAssocieAuCode.push(code);
             // il faut initialiser le serveur
             initialise = false;
             this.serveursInitialises.push(nouveauChemin)
         }
+
+        // log pour l'admin
+        console.info(code+"="+idEcole);
 
         return [nouveauChemin, initialise];
     }

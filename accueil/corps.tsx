@@ -118,6 +118,7 @@ function JeuChoixPage(props: JeuChoixPageProps) {
     const lienEtoile = domain + "/tchat/etoile0";
     const lienAnneau = domain + "/tchat/anneau0";
     const lienJeu1 = domain + "/jeu1/distribution0";
+    const lienAdmin = domain + "/admin";
     console.log(lienEtoile)
 
     return (
@@ -131,6 +132,9 @@ function JeuChoixPage(props: JeuChoixPageProps) {
             </Form>
             <Form action={lienJeu1}>
                 <Button type="submit" name="code" value={props.code}>Distribution</Button>
+            </Form>
+            <Form action={lienAdmin}>
+                <Button type="submit" name="code" value={props.code}>Page Admin</Button>
             </Form>
             <Hr/>
             <Form>

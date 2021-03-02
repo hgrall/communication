@@ -74,9 +74,10 @@ interface AccueilState {
 }
 
 export class Corps extends React.Component<{}, AccueilState> {
-    private options: {[net:string]:string} = {"Étoile 0":"E00", "Étoile 1":"E01", "Étoile 2":"E02",
-        "Étoile 3":"E03", "Étoile 4":"E04", "Anneau 0":"A00", "Anneau 1":"A01", "Anneau 2":"A02",
-        "Anneau 3":"A03", "Anneau 4":"A04", "Distribution": "DOM"};
+    // private options: {[net:string]:string} = {"Étoile 0":"EX0", "Étoile 1":"EX1", "Étoile 2":"EX2",
+    //     "Étoile 3":"EX3", "Étoile 4":"EX4", "Anneau 0":"AX0", "Anneau 1":"AX1", "Anneau 2":"AX2",
+    //     "Anneau 3":"AX3", "Anneau 4":"AX4", "Distribution": "DOM0-X"};
+    private options: {[net:string]:string} = {};
     private logBrut: string;
 
     constructor(props: {}) {
@@ -95,6 +96,8 @@ export class Corps extends React.Component<{}, AccueilState> {
     }
 
     render() {
+        console.log(document.location);
+        console.log(document.location.search);
             return (
                 <div>
                     <Admin
@@ -120,15 +123,21 @@ export class Corps extends React.Component<{}, AccueilState> {
      * à partir d'une requête GET HTTP à /admin/logs
      * */
     obtenirLogBrut() {
+        const codeAcces = document.location.search.replace("?code=",""); // ?code=XX
         const domain = document.location.origin; // en local : http://localhost:8081
         var xhr = new XMLHttpRequest(); // créer une XMLHttpRequest
 
         // configure une callback pour quand le serveur répond
         xhr.addEventListener('load', () => {
+            // obtenir id école du code d'accès
+            let idEcole = xhr.responseText.slice(xhr.responseText.lastIndexOf(codeAcces)+codeAcces.length+1,
+                xhr.responseText.indexOf("info:", xhr.responseText.lastIndexOf(codeAcces))-1);
+            // les choix des réseaux pour le menu à gauche
+            this.ajouterOptions(idEcole);
             // filtrer le log et sauvegarder l'état
             this.logBrut = xhr.responseText.replace(/info:/g,'');
             let log = this.filtrerLog(this.state.selection);
-            this.setState({ logFiltre: log });
+            this.setState({ logFiltre: log, code: codeAcces });
         })
 
         // preparer et envoyer la rêquete
@@ -165,6 +174,26 @@ export class Corps extends React.Component<{}, AccueilState> {
     modifierSelection(i: string) {
         let nouveauLog = this.filtrerLog(i);
         this.setState({ selection: i, logFiltre: nouveauLog });
+    }
+
+    ajouterOptions(idEcole: string) {
+        const MAX_ETOILE = 5;
+        const MAX_ANNEAU = 5
+        let optionEtoileNom = "Étoile "; // Étoile X
+        let optionEtoileCode = "E"+idEcole; // EYX
+        let optionAnneauNom = "Anneau "; // Anneau X
+        let optionAnneauCode = "A"+idEcole; // AYX
+        // etoile
+        for (let i:number = 0; i < MAX_ETOILE; i++) {
+            this.options[optionEtoileNom + i]=optionEtoileCode+i;
+            console.log(this.options[optionEtoileNom + i]);
+        }
+        // anneau
+        for (let i:number = 0; i < MAX_ANNEAU; i++) {
+            this.options[optionAnneauNom + i]=optionAnneauCode+i;
+        }
+        // distribution
+        this.options["Distribution"]="DOM0-"+idEcole;
     }
 
 }
