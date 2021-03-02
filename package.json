@@ -59,6 +59,7 @@
     "rxjs": "^6.6.3",
     "shelljs": "^0.8.4",
     "styled-components": "^5.2.1",
-    "websocket": "^1.0.25"
+    "websocket": "^1.0.25",
+    "winston": "^3.3.3"
   }
 }
