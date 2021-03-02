@@ -1,5 +1,4 @@
 import {ParsedUrlQuery} from "querystring";
-import {Buffer} from 'buffer/';
 // @ts-ignore
 import * as crypto from "crypto-browserify";
 
@@ -40,10 +39,12 @@ export function obtenirConfig(code: string): number {
 }
 
 /**
+import {Buffer} from 'buffer/';
+/**
  * Obtenir les configurations à partir du code d'accès.
  * Identifiant dans config.json : le code d'accès chiffré avec la clé publique (RSA)
  * @param code le code d'accès déjà validé
- * */
+ *
 export function obtenirConfigCodeChiffre(code: string): number {
     let nombreUtilisateurs = 15; // default
 
@@ -70,3 +71,4 @@ export function obtenirConfigCodeChiffre(code: string): number {
     // let encrypted = crypto.publicEncrypt(publicKey, buffer);
     // return encrypted.toString('base64');
 }
+*/
