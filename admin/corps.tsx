@@ -176,6 +176,9 @@ export class Corps extends React.Component<{}, AccueilState> {
         this.setState({ selection: i, logFiltre: nouveauLog });
     }
 
+    /**
+     * Ajout des options de réseau à choisir dans le menu à gauche
+     * */
     ajouterOptions(idEcole: string) {
         const MAX_ETOILE = 5;
         const MAX_ANNEAU = 5
