@@ -10,6 +10,7 @@ import {
     TEXTE_INV
 } from "../bibliotheque/interface/couleur";
 import Scrollbars from "react-custom-scrollbars";
+import {DateTimeForm} from "./DateTimeForm";
 
 const styleTexteBrut = {
     margin: "1ex",
@@ -68,27 +69,25 @@ const Pseudo = styled.div`
 
 interface AccueilState {
     hasCode: boolean,
-    code: string,
     selection: string,
     logFiltre: string,
 }
 
 export class Corps extends React.Component<{}, AccueilState> {
-    // private options: {[net:string]:string} = {"Étoile 0":"EX0", "Étoile 1":"EX1", "Étoile 2":"EX2",
-    //     "Étoile 3":"EX3", "Étoile 4":"EX4", "Anneau 0":"AX0", "Anneau 1":"AX1", "Anneau 2":"AX2",
-    //     "Anneau 3":"AX3", "Anneau 4":"AX4", "Distribution": "DOM0-X"};
     private options: {[net:string]:string} = {};
     private logBrut: string;
+    private filtreDateDebut: Date;
+    private filtreDateFin: Date;
 
     constructor(props: {}) {
         super(props);
         this.state = {
             hasCode: false, //aCode
-            code: "",
             selection: "Étoile 0",
-            logFiltre: " Impossible d'obtenir les logs du système"
+            logFiltre: " Impossible d'obtenir les logs du système",
         };
         this.modifierSelection = this.modifierSelection.bind(this)
+        this.modifierDatesRange = this.modifierDatesRange.bind(this)
     }
 
     componentWillMount() {
@@ -106,6 +105,7 @@ export class Corps extends React.Component<{}, AccueilState> {
                         modifSelection={this.modifierSelection} />
                     <ApresAdmin />
                     <Action>
+                        <DateTimeForm modifDatesRange={this.modifierDatesRange}/>
                         <Scrollbars style={{ width: "74vw", height: "100vh" }}>
                             <div
                                 style={styleTexteBrut as React.CSSProperties}>
@@ -132,12 +132,14 @@ export class Corps extends React.Component<{}, AccueilState> {
             // obtenir id école du code d'accès
             let idEcole = xhr.responseText.slice(xhr.responseText.lastIndexOf(codeAcces)+codeAcces.length+1,
                 xhr.responseText.indexOf("info:", xhr.responseText.lastIndexOf(codeAcces))-1);
+
             // les choix des réseaux pour le menu à gauche
             this.ajouterOptions(idEcole);
+
             // filtrer le log et sauvegarder l'état
             this.logBrut = xhr.responseText.replace(/info:/g,'');
             let log = this.filtrerLog(this.state.selection);
-            this.setState({ logFiltre: log, code: codeAcces });
+            this.setState({ logFiltre: log });
         })
 
         // preparer et envoyer la rêquete
@@ -154,17 +156,36 @@ export class Corps extends React.Component<{}, AccueilState> {
         // séparer le log brut par ligne
         const lines = this.logBrut.split('\n');
         let nouveauLog = "";
+
         // vérifier si la ligne correspond au réseau choisi avec options
         for (let line of lines) {
-            if (line.includes(this.options[selection])) {
+            if (line.includes(this.options[selection]) && this.filtreDate(line)) {
                 nouveauLog += line + '\n';
             }
         }
+
         // en cas d'absence de log
         if (nouveauLog.length <= 0) {
             nouveauLog = ' Pas de log disponible pour ce réseau';
         }
         return nouveauLog;
+    }
+
+    filtreDate(line: string):boolean {
+        // obtenir la date, deuxième element de la ligne séparé par ,
+        let lineSplit = line.split(",");
+        let dateStr = lineSplit[1].replace("le ", "").trim();
+
+        // conversion au format Date
+        let date = this.strToDate(dateStr, "/");
+
+        // comparaison
+        if ((this.filtreDateDebut == undefined) ||
+            (date >= this.filtreDateDebut && date <= this.filtreDateFin)) {
+            return true
+        } else {
+            return false
+        }
     }
 
     /**
@@ -173,7 +194,29 @@ export class Corps extends React.Component<{}, AccueilState> {
      * */
     modifierSelection(i: string) {
         let nouveauLog = this.filtrerLog(i);
+        if (i == "Distribution")
+            nouveauLog = this.ajouterStatistiques(nouveauLog);
         this.setState({ selection: i, logFiltre: nouveauLog });
+    }
+
+    /**
+     * Nouveau réseau choisi : filtre le log pour montrer les infos sur ce réseau
+     * et sauvegarde le nouveau état
+     * */
+    modifierDatesRange(dateDebut: string, dateFin: string) {
+        // conversion des strings au format Date
+        this.filtreDateDebut = this.strToDate(dateDebut, "-");
+        this.filtreDateFin = this.strToDate(dateFin, "-");
+
+        // filtrer encore le log
+        this.modifierSelection(this.state.selection);
+    }
+
+    strToDate(date: string, separation: string): Date {
+        let parts = date.split(separation);
+        return new Date(parseInt(parts[2], 10),
+            parseInt(parts[1], 10) - 1,
+            parseInt(parts[0], 10));
     }
 
     /**
@@ -189,7 +232,6 @@ export class Corps extends React.Component<{}, AccueilState> {
         // etoile
         for (let i:number = 0; i < MAX_ETOILE; i++) {
             this.options[optionEtoileNom + i]=optionEtoileCode+i;
-            console.log(this.options[optionEtoileNom + i]);
         }
         // anneau
         for (let i:number = 0; i < MAX_ANNEAU; i++) {
@@ -197,6 +239,51 @@ export class Corps extends React.Component<{}, AccueilState> {
         }
         // distribution
         this.options["Distribution"]="DOM0-"+idEcole;
+    }
+
+    /**
+     * Ajout des statistiques dans le log affiché sur le jeu distribution
+     * */
+    ajouterStatistiques(log: string) {
+        const lines = log.split('\n');
+        let newLines = "";
+        let pertes = 0, gains = 0, essais = 0, verrous = 0, echecsVerrou = 0, destructs = 0, transits = 0;
+        for (let line of lines) {
+            if (line.includes("PERTE"))
+                pertes += 1;
+            else if (line.includes("GAIN"))
+                gains += 1;
+            else if (line.includes("ESSAI"))
+                essais += 1;
+            else if (line.includes("VERROU"))
+                verrous += 1;
+            else if (line.includes("ECHEC_VERROU"))
+                echecsVerrou += 1;
+            else if (line.includes("DESTRUCT"))
+                destructs += 1;
+            else if (line.includes("TRANSIT"))
+                transits += 1;
+        }
+
+        if (pertes)
+            newLines += "PERTES : " + pertes + "\n";
+        if (gains)
+            newLines += "GAINS : " + gains + "\n";
+        if (essais)
+            newLines += "ESSAIS : " + essais + "\n";
+        if (verrous)
+            newLines += "VERROUS : " + verrous + "\n";
+        if (echecsVerrou)
+            newLines += "ECHECS VERROU : " + echecsVerrou + "\n";
+        if (destructs)
+            newLines += "DESTRUCTS : " + destructs + "\n";
+        if (transits)
+            newLines += "TRANSITS : " + transits + "\n";
+
+        if (newLines != "")
+            return log + "=== Statistiques ===\n" + newLines;
+        else
+            return log;
     }
 
 }
