@@ -62,6 +62,7 @@ Tâche 1 :
 Tâche 1 :
 - Utilisation du code d'accès pour obtenir l'identifiant école et filtrer les logs.
 - Réglages pour l'exécution sur Heroku.
+- Ajout de filtre par date
 
 ## Semaine 8 (08/03)
-Finalization du projet.
+Finalization du projet : test et révision.
