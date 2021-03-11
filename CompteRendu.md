@@ -1,13 +1,13 @@
 # Compte Rendu - Stage Helder 
 
-Compte rendu sur les réunions et le progrès du stage de Helder BETIOL pendant les mois de janvier et février 2021.
+Compte rendu sur les réunions et le progrès du stage de 2 mois de Helder BETIOL à partir de janvier 2021.
 
 ## Tâches disponibles
 1. Ressource Admin : permettre le suivre du progrès des élèves et obtenir des statistiques sur le jeu.
-2. Plusieurs écoles simultanément connectées sur Heroku : actuellement, les élèves des différentes écoles pourront être connectées sur le même réseau.
-3. Modification de la taille du réseau : créer une option configurable de la taille du réseau (actuellement, 15).
-4. Guide d'utilisateur
-5. Les variants du jeu
+2. Plusieurs écoles simultanément connectées sur Heroku : actuellement, les élèves des différentes écoles peuvent être connectées sur le même réseau.
+3. Modification de la taille du réseau : créer une option configurable de la taille du réseau (actuellement, 15 pour distribution).
+4. Guide d'utilisateur.
+5. Les variants du jeu.
 6. Bibliothèque intermédiaire, abstraction du code et DSL.
 
 ## Semaine 1 (04/01) 
@@ -57,3 +57,12 @@ Tâche 1 :
 - Création d'un fichier de log côté serveur avec [winston](https://github.com/winstonjs/winston).
 - Requête HTTP GET pour obtenir le log. Chemin : /admin/logs
 - Nouvelle interface client pour trier et afficher les logs selon le réseau choisi par l'utilisateur. Chemin : /admin
+
+## Semaine 7 (01/03)
+Tâche 1 :
+- Utilisation du code d'accès pour obtenir l'identifiant école et filtrer les logs.
+- Réglages pour l'exécution sur Heroku.
+- Ajout de filtre par date
+
+## Semaine 8 (08/03)
+Finalization du projet : test et révision.
