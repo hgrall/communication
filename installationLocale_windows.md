@@ -27,7 +27,7 @@ L'installation fournit notamment deux programmes :
     ```
         node-v14.16.0-win-x64\node.exe build\applications\applicationsMerite.js
     ```
-3. Ouvrir un navigateur à l'adresse suivante : `http://localhost:8081/`.
+3. Pour tester, ouvrir un navigateur à l'adresse suivante : `http://localhost:8081/`.
 4. Pour récupérer l'adresse du serveur, exécuter la commande suivante.
     ```
         echo Adresse du serveur : http://%COMPUTERNAME%.%USERDOMAIN%:8081

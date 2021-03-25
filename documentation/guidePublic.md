@@ -60,7 +60,7 @@ L'application de tchat en anneau permet une discussion textuelle en ligne. Les d
 Un réseau en anneau n'est pas un réseau complet : chaque utilisateur n'est relié qu'à ses deux voisins. Deux modes de communication sont possibles : vers **un voisin** ou vers les **deux** voisins.
 
 TODO réseau en anneau
-
+ 
 La fenêtre de l'application est divisée en deux colonnes : une colonne gauche indiquant le pseudo de l'utilisateur et ceux des deux voisins, une colonne droite contenant les messages reçus et envoyés ainsi que le champ d'entrée des messages. La sélection du destinataire se fait dans la colonne de gauche : un destinataire parmi les deux possibles ou tous les destinataires possibles. 
 
 ![Tchat en anneau](./tchatAnneau1.png "Utilisateur jojo du tchat en étoile")
