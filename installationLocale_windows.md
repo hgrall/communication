@@ -32,8 +32,7 @@ L'installation fournit notamment deux programmes :
     ```
         echo Adresse du serveur : http://%COMPUTERNAME%.%USERDOMAIN%:8081
     ```
-    On note `adresseServeur` cette adresse. Si cette adresse ne peut être obtenue, il est possible d'utiliser l'adresse IP de la machine.
-
+    On note `adresseServeur` l'adresse qui s'affiche. Si cette adresse ne peut être obtenue, il est possible d'utiliser l'adresse IP de la machine, qu'on obtient en demandant au système d'exploitation des informations sur la connexion.
 
 # Exécution locale : côté client
 
