@@ -173,70 +173,77 @@ class CanalTchat extends CanalServeurClientWebSocket<
      * @param m message reçu du client au format JSON.
      */
     traiterMessage(m: FormatMessageTchat): void {
-        let chemin = this.cheminServeur();
-        let msg = messageTchat(m);
-        console.log("* Traitement d'un message");
-        console.log("- brut : " + msg.brut());
-        console.log("- net : " + msg.representation());
-        switch (m.type) {
-            case TypeMessageTchat.COM:
-                let ID_emetteurUrl = this.configuration().val().centre.ID;
-                let ID_emetteurMsg = m.ID_emetteur;
-                let ID_destinataireMsg = m.ID_destinataire;
-                // Contrôle de l'émetteur et du destinataire
-                if (!(ID_emetteurUrl.val === ID_emetteurMsg.val)) {
-                    let msgErreur = "Problème d'identité pour l'émetteur : le client utilisant l'adresse "
-                        + this.adresseClient()
-                        + " devrait signer ses messages " + ID_emetteurUrl + " et non " + ID_emetteurMsg + ".";
-                    console.log("- " + msgErreur);
-                    this.envoyerAuClient(messageRetourErreur(msg, TypeMessageTchat.ERREUR_EMET, msgErreur));
+        if (this.connexions.taille() >=5) {
+            let chemin = this.cheminServeur();
+            let msg = messageTchat(m);
+            console.log("* Traitement d'un message");
+            console.log("- brut : " + msg.brut());
+            console.log("- net : " + msg.representation());
+            switch (m.type) {
+                case TypeMessageTchat.COM:
+                    let ID_emetteurUrl = this.configuration().val().centre.ID;
+                    let ID_emetteurMsg = m.ID_emetteur;
+                    let ID_destinataireMsg = m.ID_destinataire;
+                    // Contrôle de l'émetteur et du destinataire
+                    if (!(ID_emetteurUrl.val === ID_emetteurMsg.val)) {
+                        let msgErreur = "Problème d'identité pour l'émetteur : le client utilisant l'adresse "
+                            + this.adresseClient()
+                            + " devrait signer ses messages " + ID_emetteurUrl + " et non " + ID_emetteurMsg + ".";
+                        console.log("- " + msgErreur);
+                        this.envoyerAuClient(messageRetourErreur(msg, TypeMessageTchat.ERREUR_EMET, msgErreur));
+                        break;
+                    }
+                    if (this.connexions.valeur(ID_emetteurMsg) === undefined) {
+                        let msgErreur = "Problème de Web socket : la connexion n'est plus active. Fermer l'onglet et se reconnecter.";
+                        console.log("- " + msgErreur);
+                        this.envoyerAuClient(messageRetourErreur(msg, TypeMessageTchat.ERREUR_EMET, msgErreur));
+                        break;
+                    }
+                    if (this.connexions.valeur(ID_destinataireMsg) === undefined) {
+                        let msgErreur = "Destinataire inconnu ou non connecté. Attendre sa connexion ou essayer un autre destinataire.";
+                        console.log("- " + msgErreur);
+                        msgErreur = msgErreur + "\n- Message original : \n" + m.contenu;
+                        this.envoyerAuClient(messageRetourErreur(msg, TypeMessageTchat.ERREUR_DEST, msgErreur));
+                        break;
+                    }
+                    // Contrôle des communications
+                    if (!this.noeudsConnectes.sontVoisins(ID_emetteurMsg, ID_destinataireMsg)) {
+                        let msgErreur = "communication interdite : le noeud émetteur "
+                            + ID_emetteurMsg.val
+                            + " n'est pas vosin du noeud destinataire " + ID_destinataireMsg.val + ".";
+                        console.log("- " + msgErreur);
+                        this.envoyerAuClient(messageRetourErreur(msg, TypeMessageTchat.INTERDICTION, msgErreur));
+                        break;
+                    }
+                    // Fonctionnement normal
+                    let lienDestinaire: CanalTchat = this.connexions.valeur(ID_destinataireMsg);
+                    let lienEmetteur: CanalTchat = this.connexions.valeur(ID_emetteurMsg);
+                    let msgTransit = msg.transit();
+                    console.log("- Envoi en transit au client utilisant l'adresse "
+                        + lienDestinaire.adresseClient());
+                    console.log("  - du message brut : " + msgTransit.brut());
+                    console.log("  - du message net : " + msgTransit.representation());
+                    lienDestinaire.envoyerAuClient(msgTransit);
+                    let msgAR = msg.avecAccuseReception();
+                    console.log("- Envoi en accusé de réception au client utilisant l'adresse "
+                        + lienEmetteur.adresseClient());
+                    console.log("  - du message brut : " + msgAR.brut());
+                    console.log("  - du message net : " + msgAR.representation());
+                    lienEmetteur.envoyerAuClient(msgAR);
                     break;
-                }
-                if (this.connexions.valeur(ID_emetteurMsg) === undefined) {
-                    let msgErreur = "Problème de Web socket : la connexion n'est plus active. Fermer l'onglet et se reconnecter.";
+                default:
+                    let msgErreur = "Type de message non reconnu : le type doit être "
+                        + TypeMessageTchat.COM.toString() + " et non " + m.type + ".";
                     console.log("- " + msgErreur);
-                    this.envoyerAuClient(messageRetourErreur(msg, TypeMessageTchat.ERREUR_EMET, msgErreur));
+                    this.envoyerAuClient(messageRetourErreur(msg, TypeMessageTchat.ERREUR_TYPE, msgErreur));
                     break;
-                }
-                if (this.connexions.valeur(ID_destinataireMsg) === undefined) {
-                    let msgErreur = "Destinataire inconnu ou non connecté. Attendre sa connexion ou essayer un autre destinataire.";
-                    console.log("- " + msgErreur);
-                    msgErreur = msgErreur + "\n- Message original : \n" + m.contenu;
-                    this.envoyerAuClient(messageRetourErreur(msg, TypeMessageTchat.ERREUR_DEST, msgErreur));
-                    break;
-                }
-                // Contrôle des communications
-                if (!this.noeudsConnectes.sontVoisins(ID_emetteurMsg, ID_destinataireMsg)) {
-                    let msgErreur = "communication interdite : le noeud émetteur "
-                        + ID_emetteurMsg.val
-                        + " n'est pas vosin du noeud destinataire " + ID_destinataireMsg.val + ".";
-                    console.log("- " + msgErreur);
-                    this.envoyerAuClient(messageRetourErreur(msg, TypeMessageTchat.INTERDICTION, msgErreur));
-                    break;
-                }
-                // Fonctionnement normal
-                let lienDestinaire: CanalTchat = this.connexions.valeur(ID_destinataireMsg);
-                let lienEmetteur: CanalTchat = this.connexions.valeur(ID_emetteurMsg);
-                let msgTransit = msg.transit();
-                console.log("- Envoi en transit au client utilisant l'adresse "
-                    + lienDestinaire.adresseClient());
-                console.log("  - du message brut : " + msgTransit.brut());
-                console.log("  - du message net : " + msgTransit.representation());
-                lienDestinaire.envoyerAuClient(msgTransit);
-                let msgAR = msg.avecAccuseReception();
-                console.log("- Envoi en accusé de réception au client utilisant l'adresse "
-                    + lienEmetteur.adresseClient());
-                console.log("  - du message brut : " + msgAR.brut());
-                console.log("  - du message net : " + msgAR.representation());
-                lienEmetteur.envoyerAuClient(msgAR);
-                break;
-            default:
-                let msgErreur = "Type de message non reconnu : le type doit être "
-                    + TypeMessageTchat.COM.toString() + " et non " + m.type + ".";
-                console.log("- " + msgErreur);
-                this.envoyerAuClient(messageRetourErreur(msg, TypeMessageTchat.ERREUR_TYPE, msgErreur));
-                break;
+            }
         }
+        else {
+            let msg = messageTchat(m);
+            this.envoyerAuClient(messageRetourErreur(msg, TypeMessageTchat.ERREUR_CONNEXION, "Nombre d'utilisateurs insuffisant"));
+        }
+
     }
     /**
      * Traite la fermeture par les actions suivantes :
