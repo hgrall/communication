@@ -15,6 +15,7 @@ interface ProprietesAdmin {
   tous: Individu;
   selection: Individu;
   modifSelection: (i: Individu) => void;
+  nombreConnexions : string
 }
 
 class ContenuAdmin extends React.Component<ProprietesAdmin, {}> {
@@ -27,7 +28,8 @@ class ContenuAdmin extends React.Component<ProprietesAdmin, {}> {
             objets={this.props.objets}
             tous={this.props.tous}
             selection={this.props.selection}
-            modifSelection={this.props.modifSelection} />
+            modifSelection={this.props.modifSelection}
+            nombreConnexions = {this.props.nombreConnexions} />
         </Scrollbars>
       </div>
     );

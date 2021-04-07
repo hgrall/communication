@@ -14,6 +14,7 @@ interface ProprietesAdmin {
     tous: Individu;
     selection: Individu;
     modifSelection: (i: Individu) => void;
+    nombreConnexions: string;
 }
 
 const SujetAdmin = styled.div`
@@ -138,6 +139,7 @@ class ContenuContainerAdmin extends React.Component<ProprietesAdmin, {}> {
                         </Pseudo>
                     </SujetAdminContainer>
                 </SujetAdmin>
+                <h2> Nombre de connexions: {this.props.nombreConnexions }/5 </h2>
                 Choisissez un destinataire :
                 {this.props.objets.map(i =>
                     <ObjetAdmin choix={this.props.selection.nom === i.nom}

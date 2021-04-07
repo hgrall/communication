@@ -240,13 +240,14 @@ export function noeudTchat(n: FormatNoeudTchat): NoeudTchat {
 export interface FormatConfigurationTchat extends FormatConfigurationInitiale {
     readonly "centre": FormatSommetTchat,
     readonly "voisins": FormatTableIdentification<'sommet', FormatSommetTchat>,
-    readonly "date": FormatDateFr
+    readonly "date": FormatDateFr,
+    readonly "nombreConnexions" : number
 }
 
 /**
  * Etiquettes utiles pour représenter une configuration.
  */
-export type EtiquetteConfigurationTchat = 'centre' | 'voisins' | 'date';
+export type EtiquetteConfigurationTchat = 'centre' | 'voisins' | 'date' |'nombreConnexions';
 
 /**
  * Interface pour les configurations initiales du tchat.
@@ -285,6 +286,7 @@ export class ConfigurationTchatParEnveloppe
             case 'voisins':
                 return table(config.voisins.identification).application((x) => x.pseudo).representation();
             case 'date': return dateEnveloppe(config.date).representation();
+            case 'nombreConnexions':  return  ""+ config.nombreConnexions;
         }
         return jamais(e);
     }
@@ -322,15 +324,17 @@ export function configurationTchat(c: FormatConfigurationTchat) {
  * à partir d'un noeud et d'une date, au format JSON.
  * @param n description du noeud au format JSON
  * @param date date en français au format JSON
+ * @param nombreConnexions nombre de connexions actives dans le reseau
  */
 export function configurationDeNoeudTchat(
-    n: FormatNoeudTchat, date: FormatDateFr)
+    n: FormatNoeudTchat, date: FormatDateFr, nombreConnexions: number)
     : ConfigurationTchatParEnveloppe {
     return new ConfigurationTchatParEnveloppe({
         "configurationInitiale": Unite.ZERO,
         "centre": n.centre,
         "voisins": n.voisins,
-        "date": date
+        "date": date,
+        "nombreConnexions" : nombreConnexions
     });
 }
 

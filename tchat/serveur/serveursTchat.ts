@@ -153,7 +153,7 @@ class CanalTchat extends CanalServeurClientWebSocket<
         this.connexions.ajouter(ID_sommet, this);
 
         let n = this.noeudsAConnecter.noeud(ID_sommet);
-        let config = configurationDeNoeudTchat(n, d.val());
+        let config = configurationDeNoeudTchat(n, d.val(), this.connexions.taille());
         console.log("- envoi au client d'adresse " + this.adresseClient());
         console.log("  - de la configuration brute " + config.brut());
         console.log("  - de la configuration nette " + config.representation());
