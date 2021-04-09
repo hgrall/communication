@@ -12,6 +12,7 @@ export interface CanalClientServeur<
     enregistrerTraitementMessageRecu(traitement: (m: FMsg) => void): void;
     enregistrerTraitementConfigurationRecue(traitement: (c: FConf) => void): void;
     enregistrerTraitementErreurRecue(traitement: (e: FErr) => void): void
+    enregistrerTraitementInformationRecue(traitement: (e: FMsg) => void): void
 }
 
 class CanalClientServeurWebSocket<
@@ -66,6 +67,18 @@ class CanalClientServeurWebSocket<
         });
     };
 
+    enregistrerTraitementInformationRecue(traitement: (m: FMsg) => void): void {
+        this.lienServeur.addEventListener("message", function (e: MessageEvent) {
+            let msg = JSON.parse(e.data);
+            if (msg.configurationInitiale !== undefined) {
+                return;
+            }
+            if (msg.erreurRedhibitoire !== undefined) {
+                return;
+            }
+            traitement(<FMsg>msg);
+        });
+    };
 };
 
 export function creerCanalClient<

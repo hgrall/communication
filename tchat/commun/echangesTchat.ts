@@ -28,7 +28,7 @@ import {
 } from "../../bibliotheque/types/table";
 
 import {
-    Identifiant, FormatIdentifiable
+    Identifiant, FormatIdentifiable, identifiant
 } from "../../bibliotheque/types/identifiant";
 import { FormatTableIdentification } from "../../bibliotheque/types/tableIdentification";
 
@@ -429,7 +429,8 @@ export enum TypeMessageTchat {
     ERREUR_EMET,
     ERREUR_DEST,
     ERREUR_TYPE,
-    INTERDICTION
+    INTERDICTION,
+    INFO = 8
 }
 /*
 export function chaineTypeMessageChat(x : TypeMessageChat) : string  {
@@ -589,6 +590,27 @@ export function messageCommunication(id: Identifiant<'message'>,
         ID_emetteur: idEmetteur,
         ID_destinataire: idDestinataire,
         type: TypeMessageTchat.COM,
+        contenu: texte,
+        date: date
+    });
+}
+
+/**
+ * Fabrique d'un message d'information
+ * @param id identifiant du message
+ * @param idEmetteur identifiant de l'émetteur
+ * @param idDestinataire identifiant du destinataire
+ * @param texte contenu
+ * @param date date (en français)
+ */
+export function messageInformation(id: Identifiant<'message'>,
+                                     idEmetteur: Identifiant<'sommet'>, idDestinataire: Identifiant<'sommet'>,
+                                     texte: string, date: FormatDateFr): MessageTchat {
+    return new MessageTchatParEnveloppe({
+        ID: id,
+        ID_emetteur: idEmetteur,
+        ID_destinataire: idDestinataire,
+        type: TypeMessageTchat.INFO,
         contenu: texte,
         date: date
     });
