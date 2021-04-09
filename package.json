@@ -7,7 +7,7 @@
     "node": "14.13.1"
   },
   "scripts": {
-    "tsc": "tsc",
+    "tsc": "tsc --incremental",
     "webpack": "webpack",
     "build": "npm run tsc && npm run webpack",
     "buildAvecVerif": "npm run tsc && npm run verif && npm run webpack",

@@ -13,7 +13,8 @@ var config = {
     output: {
         path: __dirname + "/build",
         filename: "[name].client.js",
-        publicPath: "/" // added to the js name when injected in the HTML
+        publicPath: "/", // added to the js name when injected in the HTML
+        pathinfo: false
     },
     // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
@@ -25,11 +26,16 @@ var config = {
     module: {
         rules: [
             // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-            { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
+            {test: /\.tsx?$/, loader: "awesome-typescript-loader"},
 
             // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-            { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
+            {enforce: "pre", test: /\.js$/, loader: "source-map-loader"}
         ]
+    },
+    optimization: {
+        removeAvailableModules: false,
+        removeEmptyChunks: false,
+        splitChunks: false,
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -61,7 +67,7 @@ var config = {
         }),
         new CopyPlugin({
             patterns: [
-                { from: "config.json" },
+                {from: "config.json"},
             ],
         }),
     ]
