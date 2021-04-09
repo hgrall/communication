@@ -10,7 +10,9 @@ import {
 } from "../../bibliotheque/types/table";
 
 import {
-    Identifiant
+    creerIdentificationParCompteur,
+    identifiant,
+    Identifiant, Identification
 } from "../../bibliotheque/types/identifiant";
 
 import {
@@ -21,10 +23,20 @@ import { FormatReseau } from "../../bibliotheque/reseau/reseaux";
 
 import {
     messageRetourErreur,
-    TypeMessageTchat, FormatMessageTchat, EtiquetteMessageTchat,
+    TypeMessageTchat,
+    FormatMessageTchat,
+    EtiquetteMessageTchat,
     messageTchat,
-    configurationDeNoeudTchat, FormatConfigurationTchat, EtiquetteConfigurationTchat,
-    erreurTchatDeMessage, FormatErreurTchat, EtiquetteErreurTchat, SommetTchat, FormatSommetTchat, ConfigurationTchat,
+    configurationDeNoeudTchat,
+    FormatConfigurationTchat,
+    EtiquetteConfigurationTchat,
+    erreurTchatDeMessage,
+    FormatErreurTchat,
+    EtiquetteErreurTchat,
+    SommetTchat,
+    FormatSommetTchat,
+    ConfigurationTchat,
+    messageCommunication, messageInformation,
 } from '../commun/echangesTchat';
 import {
     ReseauTchatMutable, creerReseauTchatEnAnneau, creerReseauTchatEnEtoile,
@@ -39,6 +51,7 @@ import {
 } from "../../bibliotheque/communication/serveurApplications";
 
 import { dateMaintenant } from "../../bibliotheque/types/date"
+import {MessageParEnveloppe} from "../../bibliotheque/reseau/formats";
 
 /**
  * Canal de communication entre un client et le serveur, pour le tchat,
@@ -158,6 +171,15 @@ class CanalTchat extends CanalServeurClientWebSocket<
         console.log("  - de la configuration brute " + config.brut());
         console.log("  - de la configuration nette " + config.representation());
         this.envoyerConfiguration(config);
+
+        // Envoie du nombre de connexions actives sur le serveur
+        this.connexions.domaine().forEach(connexion => {
+            let lienEmetteur: CanalTchat = this.connexions.valeur(connexion);
+            let identification: Identification<'message'>
+                = creerIdentificationParCompteur('message');
+            lienEmetteur.envoyerAuClient(messageInformation(identification.identifier('message'), ID_sommet, connexion, this.connexions.taille()+"", d.val()));
+        });
+
         this.noeudsAConnecter.retirerNoeud(n);
         this.noeudsConnectes.ajouterNoeud(n);
         return true;
@@ -275,6 +297,15 @@ class CanalTchat extends CanalServeurClientWebSocket<
         this.noeudsConnectes.retirerNoeud(n);
         this.connexions.retirer(ID_centre);
         this.noeudsAConnecter.ajouterNoeud(n);
+
+        // Envoie du nombre de connexions actives sur le serveur
+        let d = dateMaintenant();
+        this.connexions.domaine().forEach(connexion => {
+            let lienEmetteur: CanalTchat = this.connexions.valeur(connexion);
+            let identification: Identification<'message'>
+                = creerIdentificationParCompteur('message');
+            lienEmetteur.envoyerAuClient(messageInformation(identification.identifier('message'), ID_centre, connexion, this.connexions.taille()+"", d.val()));
+        });
     }
 }
 

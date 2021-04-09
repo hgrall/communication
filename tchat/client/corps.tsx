@@ -294,6 +294,11 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
                 this.mettreAJourMessageEnvoye(m.ID, destinataire);
                 return;
             }
+
+            if (m.type === TypeMessageTchat.INFO) {
+                this.setState({nombreConnexions: m.contenu})
+                return;
+            }
             /* Messages d'erreur */
             let emetteur: Individu;
             let destinataire: Individu;
