@@ -10,9 +10,29 @@ import {
 import { CanalClientServeur, creerCanalClient } from "../../bibliotheque/communication/client";
 
 import {
-  FormatErreurDistribution, FormatConfigurationDistribution,
-  FormatMessageDistribution, EtiquetteMessageDistribution,
-  ConfigurationDistribution, configurationJeu1Distribution, erreurDistribution, FormatPopulationLocale, FormatUtilisateur, FormatConsigne, FormatDomaine, consigne, domaine, MessageDistribution, messageDistribution, messageInitial, TypeMessageDistribution, messageDemandeVerrouillage, populationLocale, messageDemandeDeverrouillage, transmission, essai
+  FormatErreurDistribution,
+  FormatConfigurationDistribution,
+  FormatMessageDistribution,
+  EtiquetteMessageDistribution,
+  ConfigurationDistribution,
+  configurationJeu1Distribution,
+  erreurDistribution,
+  FormatPopulationLocale,
+  FormatUtilisateur,
+  FormatConsigne,
+  FormatDomaine,
+  consigne,
+  domaine,
+  MessageDistribution,
+  messageDistribution,
+  messageInitial,
+  TypeMessageDistribution,
+  messageDemandeVerrouillage,
+  populationLocale,
+  messageDemandeDeverrouillage,
+  transmission,
+  essai,
+  TypeErreurDistribution
 } from "../commun/echangesJeu1Distribution";
 
 import { Admin } from "./admin";
@@ -689,13 +709,22 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
 
     console.log("- du traitement d'une erreur rédhibitoire");
     this.canal.enregistrerTraitementErreurRecue((err: FormatErreurDistribution) => {
-      let erreur = erreurDistribution(err);
-      console.log("* Réception");
-      console.log("- de l'erreur rédhibitoire brute : " + erreur.brut());
-      console.log("- de l'erreur rédhibitoire nette : " + erreur.representation());
-      console.log("* Affichage de l'erreur");
-      this.messageErreur = erreur.representation();
-      this.modifierEtatInterface(EtatInterfaceJeu1.ERRONE);
+      switch (err.type) {
+        case TypeErreurDistribution.NOM_CONNEXIONS:
+          alert(err.messageErreur);
+          this.modifierFormulaireMessage(
+              formulaireMessage(this.utilisateur, this.domaineUtilisateur, [], this.consigne));
+          return;
+        case TypeErreurDistribution.REDHIBITOIRE:
+          let erreur = erreurDistribution(err);
+          console.log("* Réception");
+          console.log("- de l'erreur rédhibitoire brute : " + erreur.brut());
+          console.log("- de l'erreur rédhibitoire nette : " + erreur.representation());
+          console.log("* Affichage de l'erreur");
+          this.messageErreur = erreur.representation();
+          this.modifierEtatInterface(EtatInterfaceJeu1.ERRONE);
+          return;
+      }
     });
 
   }

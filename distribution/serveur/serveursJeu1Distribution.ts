@@ -1,44 +1,54 @@
 import * as websocket from 'websocket';
 
-import {
-    TableMutable,
-    creerTableMutableVide,
-    table
-} from "../../bibliotheque/types/table";
+import {table} from "../../bibliotheque/types/table";
 
 import {
-    TableIdentificationMutable, creerTableIdentificationMutableVide, TableIdentification
+    creerTableIdentificationMutableVide,
+    TableIdentification,
+    TableIdentificationMutable
 } from "../../bibliotheque/types/tableIdentification";
 
-import { } from "../../bibliotheque/reseau/reseaux";
-
 import {
-    AiguilleurWebSocket, CanalServeurClientWebSocket, ServeurCanaux, ServeurAbstraitCanaux
+    AiguilleurWebSocket,
+    CanalServeurClientWebSocket,
+    ServeurAbstraitCanaux,
+    ServeurCanaux
 } from "../../bibliotheque/communication/serveurConnexions";
-import {
-    ServeurApplications
-} from "../../bibliotheque/communication/serveurApplications";
+import {ServeurApplications} from "../../bibliotheque/communication/serveurApplications";
 
-import { dateMaintenant } from "../../bibliotheque/types/date"
+import {dateMaintenant} from "../../bibliotheque/types/date"
 import {
-    TableauMutable, creerTableauMutableVide, FormatTableau
-}
-    from "../../bibliotheque/types/tableau";
+    compositionConfigurationJeu1,
+    compositionErreurDistribution,
+    ConfigurationDistribution,
+    consigne,
+    Domaine,
+    domaine,
+    EtiquetteConfigurationDistribution,
+    EtiquetteErreurDistribution,
+    EtiquetteMessageDistribution,
+    FormatConfigurationDistribution,
+    FormatDomaine,
+    FormatErreurDistribution,
+    FormatMessageDistribution,
+    FormatPopulationLocale,
+    FormatUtilisateur,
+    messageDistribution,
+    MessageDistribution,
+    populationLocale,
+    TypeErreurDistribution,
+    TypeMessageDistribution,
+    Utilisateur,
+    utilisateur
+} from "../commun/echangesJeu1Distribution";
 import {
-    FormatErreurDistribution, EtiquetteErreurDistribution,
-    FormatConfigurationDistribution, EtiquetteConfigurationDistribution,
-    FormatMessageDistribution, EtiquetteMessageDistribution,
-    populationLocale, compositionConfigurationJeu1, ConfigurationDistribution, messageDistribution, TypeMessageDistribution, messageInitial, MessageDistribution, FormatDomaine, Domaine, Utilisateur, FormatUtilisateur, domaine, FormatPopulationLocale, utilisateur, consigne, erreurDistribution, compositionErreurDistribution
-}
-    from "../commun/echangesJeu1Distribution";
-import {
-    ConfigurationServeurJeu1Distribution, creerConfigurationServeur,
-    FormatConfigurationServeurJeu1Distribution, ReseauJeu1Distribution
-}
-    from "./generationReseauJeu1Distribution";
-import { divEuclidienne } from "../../bibliotheque/types/entier";
-import { Identifiant, Identification, creerIdentificationParCompteur, identifiant } from '../../bibliotheque/types/identifiant';
-import { mot, egaliteMots } from '../../bibliotheque/types/binaire';
+    ConfigurationServeurJeu1Distribution,
+    creerConfigurationServeur,
+    ReseauJeu1Distribution
+} from "./generationReseauJeu1Distribution";
+import {divEuclidienne} from "../../bibliotheque/types/entier";
+import {creerIdentificationParCompteur, Identifiant, Identification} from '../../bibliotheque/types/identifiant';
+import {egaliteMots, mot} from '../../bibliotheque/types/binaire';
 
 
 /**
@@ -122,7 +132,7 @@ class CanalJeu1Distribution extends CanalServeurClientWebSocket<
             console.log("* " + d.representationLog() + " - Connexion impossible d'un client : le réseau est complet.");
             this.envoyerMessageErreur(compositionErreurDistribution(
                 "Jeu de distribution - Réseau complet ! Il est impossible de se connecter : le réseau est complet.",
-                d.val()));
+                d.val(), TypeErreurDistribution.REDHIBITOIRE));
             return false;
         }
         let cfg = this.configurationsUtilisateursAConnecter.retirer(ID_utilisateur).valeur();
@@ -434,6 +444,13 @@ class CanalJeu1Distribution extends CanalServeurClientWebSocket<
      * @param m message reçu du client au format JSON.
      */
     traiterMessage(m: FormatMessageDistribution): void {
+        if (this.connexions.taille() < 15) {
+            let d = dateMaintenant();
+            this.envoyerMessageErreur(compositionErreurDistribution(
+                "Jeu de distribution - Réseau incomplet ! Il est impossible d'envoyer des messages",
+                d.val(), TypeErreurDistribution.NOM_CONNEXIONS));
+            return;
+        }
         let chemin = this.cheminServeur();
         let msg = messageDistribution(m);
         console.log("* Traitement d'un message");

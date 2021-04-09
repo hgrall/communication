@@ -1038,9 +1038,21 @@ export function compositionConfigurationJeu1(
   });
 }
 
+/**
+ * Type des erreurs pour le jeu 1 de distribution.
+ * - Canaux du serveur
+ *   - Rédhibitoire : RÉDHIBITOIRE
+ *   - nombre de connexions insuffisants : NOM_CONNEXIONS
+ */
+export enum TypeErreurDistribution {
+  REDHIBITOIRE= 0,
+  NOM_CONNEXIONS= 1 ,
+}
+
 export interface FormatErreurDistribution extends FormatErreurRedhibitoire {
   readonly messageErreur: string;
   readonly date: FormatDateFr;
+  readonly type: TypeErreurDistribution;
 }
 
 export type EtiquetteErreurDistribution = 'messageErreur' | 'date';
@@ -1066,11 +1078,12 @@ export function erreurDistribution(err: FormatErreurDistribution): ErreurDistrib
   return new ErreurDistribution(err);
 }
 
-export function compositionErreurDistribution(msg: string, date: FormatDateFr): ErreurDistribution {
+export function compositionErreurDistribution(msg: string, date: FormatDateFr, type: TypeErreurDistribution): ErreurDistribution {
   return new ErreurDistribution({
     erreurRedhibitoire: Unite.ZERO,
     messageErreur: msg,
-    date: date
+    date: date,
+    type:type
   });
 }
 
@@ -1118,7 +1131,8 @@ export enum TypeMessageDistribution {
   GAIN, // ok - C
   PERTE, // ok - C
   DESTRUCT, // ok - C
-  ECHEC_VERROU // ok - C
+  ECHEC_VERROU, // ok - C
+  ERREUR_CONNEXIONS = 13
   //ADMIN,
   //NONCONF, // ok
   //SUCCES_INIT,
@@ -1504,5 +1518,30 @@ export function essai(
  */
 export function messageDistribution(msg: FormatMessageDistribution) {
   return new MessageDistribution(msg);
+}
+
+/**
+ * Fabrique d'un message pour un essai d'interprétation.
+ * Voir le canal "verifier" dans la spécification chimique.
+ * @param contenu mot binaire de sept bits représentant l'interprétation du
+ *   message.
+ */
+export function messageErreur(
+    identifiant: Identifiant<'message'>,
+    id_emetteur: Identifiant<'utilisateur'>,
+    id_origine: Identifiant<'sommet'>,
+    id_destination: Identifiant<'sommet'>,
+    contenu: Mot,
+    date: DateFr
+): MessageDistribution {
+  return new MessageDistribution({
+    ID: identifiant,
+    ID_utilisateur: id_emetteur,
+    ID_origine: id_origine,
+    ID_destination: id_destination,
+    type: TypeMessageDistribution.ERREUR_CONNEXIONS,
+    contenu: contenu.tableauBinaire(),
+    date: date.val()
+  });
 }
 
