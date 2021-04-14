@@ -20,7 +20,8 @@ interface ProprietesAdmin {
   domainesVoisins: ReadonlyArray<DomaineInterface>;
   selection: DomaineInterface;
   modifSelection: (d: DomaineInterface) => void;
-  nombreConnexions : string
+  nombreConnexions : string,
+  tailleReseau: string
 }
 
 class AdminBrut extends React.Component<ProprietesAdmin, {}> {
@@ -36,7 +37,8 @@ class AdminBrut extends React.Component<ProprietesAdmin, {}> {
             domainesVoisins={this.props.domainesVoisins}
             selection={this.props.selection}
             modifSelection={this.props.modifSelection}
-            nombreConnexions ={this.props.nombreConnexions}/>
+            nombreConnexions ={this.props.nombreConnexions}
+            tailleReseau ={this.props.tailleReseau}/>
         </Scrollbars>
       </div>
     );

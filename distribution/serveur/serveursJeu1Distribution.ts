@@ -777,7 +777,8 @@ export class ServeurCanauxJeu1Distribution<S extends ServeurApplications>
                         u,
                         dateMaintenant().val(),
                         this.configuration.consignesEmission().valeur(u.ID),
-                        this.configuration.attendusReception().valeur(u.ID)
+                        this.configuration.attendusReception().valeur(u.ID),
+                        this.nombreConnexions
                     );
                     this._configsUtilisateursAConnecter
                         .ajouter(idU, config);

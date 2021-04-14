@@ -835,6 +835,11 @@ export interface FormatConfigurationDistribution extends FormatConfigurationInit
    * Message à recevoir
    */
   readonly messageARecevoir: FormatConsigne;
+
+  /**
+   * Taille Reseau
+   */
+  readonly tailleReseau: number;
 }
 
 /**
@@ -877,6 +882,7 @@ export interface ConfigurationDistribution
    * Configuration obtenue en mettant à jour la date.
    */
   aJour(d: DateFr): ConfigurationDistribution;
+
 }
 
 /**
@@ -999,7 +1005,7 @@ export class ConfigurationDistributionParEnveloppe
     const cfg = this.val();
     return compositionConfigurationJeu1(
       this.noeud().val(), cfg.population, cfg.utilisateur, d.val(),
-      cfg.consigne, cfg.messageARecevoir
+      cfg.consigne, cfg.messageARecevoir, cfg.tailleReseau
     );
   }
 }
@@ -1032,7 +1038,8 @@ export function compositionConfigurationJeu1(
   u: FormatUtilisateur,
   date: FormatDateFr,
   consigne: FormatConsigne,
-  messageARecevoir: FormatConsigne
+  messageARecevoir: FormatConsigne,
+  tailleReseau: number,
 ): ConfigurationDistributionParEnveloppe {
   return new ConfigurationDistributionParEnveloppe({
     configurationInitiale: Unite.ZERO,
@@ -1042,7 +1049,8 @@ export function compositionConfigurationJeu1(
     voisins: n.voisins,
     date: date,
     consigne: consigne,
-    messageARecevoir: messageARecevoir
+    messageARecevoir: messageARecevoir,
+    tailleReseau: tailleReseau
   });
 }
 

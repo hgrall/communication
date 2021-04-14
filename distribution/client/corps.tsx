@@ -105,6 +105,7 @@ interface EtatCorps {
   formulaireMessage: FormatOption<FormulaireMessage>;
   formulaireEssai: FormatOption<FormulaireEssai>;
   nombreConnexions: string;
+  tailleReseau: string;
 }
 
 const ID_INCONNU: string = "?";
@@ -150,6 +151,7 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
       formulaireMessage: rienOption<FormulaireMessage>().val(),
       formulaireEssai: rienOption<FormulaireMessage>().val(),
       nombreConnexions: "0",
+      tailleReseau:"0",
     };
     this.modifierSelection = this.modifierSelection.bind(this);
     this.envoyerMessageInitial = this.envoyerMessageInitial.bind(this);
@@ -407,6 +409,7 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
               domainesVoisins={this.domainesVoisins.image()}
               selection={this.state.selection} modifSelection={this.modifierSelection}
               nombreConnexions={this.state.nombreConnexions}
+              tailleReseau = {this.state.tailleReseau}
             />
             <ApresAdmin />
             <Action
@@ -693,6 +696,7 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
         fond: COUPLE_FOND_ENCRE_SUJET.fond,
         encre: COUPLE_FOND_ENCRE_SUJET.encre
       };
+      this.setState({tailleReseau: config.val().tailleReseau+""});
       let suite = new SuiteCouplesFondEncre();
       this.domainesVoisins =
         tableIdentification('sommet',

@@ -18,6 +18,7 @@ interface ProprietesAdmin {
     selection: DomaineInterface;
     modifSelection: (d: DomaineInterface) => void;
     nombreConnexions : string
+    tailleReseau: string
 }
 
 const SujetAdmin = styled.div`
@@ -204,7 +205,7 @@ class ContainerAdminBrut extends React.Component<ProprietesAdmin, {}> {
                         nomDomaine={mot(i.domaine.nom).representation()}
                         key={i.domaine.ID.val} />
                 )}
-                <TexteInformation>Nombre de connexions : {this.props.nombreConnexions}/10</TexteInformation>
+                <TexteInformation>Nombre de connexions : {this.props.nombreConnexions}/{this.props.tailleReseau}</TexteInformation>
             </div>
         );
     }
