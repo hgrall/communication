@@ -24,6 +24,16 @@ export interface FormatConfigurationInitiale {
 export interface FormatErreurRedhibitoire {
     readonly "erreurRedhibitoire": Unite
 }
+
+/**
+ * Interface JSON servant de marqueur pour les informations.
+ * Elle possède une clé pour permettre la discrimination : cette
+ * clé est inutilisable par les autres interfaces.
+ * Cette interface pourrait être complétée à l'avenir.
+ */
+export interface FormatInformation {
+    readonly "information": Unite
+}
 /**
  * Interface JSON servant de marqueur pour les messages.
  * Elle ne possède pas de clé permettant la discrimination.
@@ -147,4 +157,45 @@ export abstract class ErreurRedhibitoireParEnveloppe<
         return this.etat();
     }
 }
+
+/**
+ * Interface pour les informations abstraitess.
+ *
+ * @param FInfo type représentant en JSON les informations.
+ * @param EtInfo étiquettes utiles pour la représentation d'une information.
+ */
+export interface Information<
+    FInfo extends FormatInformation,
+    EtInfo extends string
+    >
+    extends TypeEnveloppe<FInfo, EtInfo> { }
+
+
+/**
+ * Information abstraite enveloppe d'une structure JSON.
+ * Une implémentation s'obtient en définissant les méthodes "net"
+ * et "representation".
+ *
+ * @param FInfo type représentant en JSON les information.
+ * @param EtInfo étiquettes utiles pour la représentation d'une information.
+ */
+
+export abstract class InformationParEnveloppe<
+    FInfo extends FormatInformation,
+    EtInfo extends string
+    >
+    extends Enveloppe<FInfo, FInfo, EtInfo>
+    implements Information<FInfo, EtInfo> {
+    constructor(etat: FInfo) {
+        super(x => x, etat);
+    }
+    /**
+     * Représentation JSON de l'erreur, égale à l'état.
+     */
+    val(): FInfo {
+        return this.etat();
+    }
+}
+
+
 

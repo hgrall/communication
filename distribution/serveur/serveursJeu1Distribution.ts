@@ -20,23 +20,26 @@ import {dateMaintenant} from "../../bibliotheque/types/date"
 import {
     compositionConfigurationJeu1,
     compositionErreurDistribution,
+    compositionInformationDistribution,
     ConfigurationDistribution,
     consigne,
     Domaine,
     domaine,
     EtiquetteConfigurationDistribution,
     EtiquetteErreurDistribution,
+    EtiquetteInformationDistribution,
     EtiquetteMessageDistribution,
     FormatConfigurationDistribution,
     FormatDomaine,
     FormatErreurDistribution,
     FormatMessageDistribution,
     FormatPopulationLocale,
-    FormatUtilisateur,
+    FormatUtilisateur, InformationDistribution,
     messageDistribution,
     MessageDistribution,
     populationLocale,
     TypeErreurDistribution,
+    TypeInformationDistribution,
     TypeMessageDistribution,
     Utilisateur,
     utilisateur
@@ -49,6 +52,7 @@ import {
 import {divEuclidienne} from "../../bibliotheque/types/entier";
 import {creerIdentificationParCompteur, Identifiant, Identification} from '../../bibliotheque/types/identifiant';
 import {egaliteMots, mot} from '../../bibliotheque/types/binaire';
+import {FormatInformation} from "../../bibliotheque/reseau/formats";
 
 
 /**
@@ -65,13 +69,9 @@ import {egaliteMots, mot} from '../../bibliotheque/types/binaire';
  * - "reseauxConnectes" : portions de réseaux déjà connectées,
  * - "connexions" : connexions entre les clients et le serveur.
  */
-class CanalJeu1Distribution extends CanalServeurClientWebSocket<
-    FormatErreurDistribution, EtiquetteErreurDistribution,
-    FormatConfigurationDistribution, EtiquetteConfigurationDistribution,
-    FormatMessageDistribution, EtiquetteMessageDistribution,
-    ConfigurationDistribution
-    >
-{
+class CanalJeu1Distribution extends CanalServeurClientWebSocket<FormatErreurDistribution, EtiquetteErreurDistribution, FormatConfigurationDistribution, EtiquetteConfigurationDistribution, FormatMessageDistribution, EtiquetteMessageDistribution, ConfigurationDistribution, FormatInformation, EtiquetteInformationDistribution> {
+
+    private nombreConnexions:number;
 
     /**
      * Constructeur initialisant les attributs à partir de l'aiguilleur.
@@ -104,8 +104,9 @@ class CanalJeu1Distribution extends CanalServeurClientWebSocket<
             TableIdentificationMutable<"message", Utilisateur, FormatUtilisateur>,
         private populations:
             TableIdentification<'sommet', FormatPopulationLocale>,
-        chemin: string, connexion: websocket.connection, adresseIPClient: string) {
+        chemin: string, connexion: websocket.connection, adresseIPClient: string, nombreConnexions: number) {
         super(chemin, connexion, adresseIPClient);
+        this.nombreConnexions = nombreConnexions;
     }
     /**
      * Traite la connexion par les actions suivantes :
@@ -161,6 +162,8 @@ class CanalJeu1Distribution extends CanalServeurClientWebSocket<
         console.log("  - de la configuration nette " + cfg.representation());
         this.envoyerConfiguration(cfg);
         this.configurationsUtilisateursConnectes.ajouter(ID_utilisateur, cfg);
+        // Diffuser le nombre d'utilisateurs connectés dans le reseau a tous les connexions
+        this.diffuserInformation(compositionInformationDistribution(this.connexions.taille()+"", d.val(), TypeInformationDistribution.NOM_CONNEXIONS));
         return true;
     }
     // ok
@@ -200,6 +203,17 @@ class CanalJeu1Distribution extends CanalServeurClientWebSocket<
             return false;
         }
         this.connexions.valeur(idUtilisateur).envoyerAuClient(msg);
+        return true;
+    }
+
+    envoyerInformationAClient(
+        info: InformationDistribution, idUtilisateur: Identifiant<"utilisateur">): boolean {
+        if (!this.connexions.contient(idUtilisateur)) {
+            console.log("  - Pas d'envoi à l'utilisateur non connecté d'identifiant "
+                + idUtilisateur.val);
+            return false;
+        }
+        this.connexions.valeur(idUtilisateur).envoyerMessageInformation(info);
         return true;
     }
     // ok
@@ -437,6 +451,18 @@ class CanalJeu1Distribution extends CanalServeurClientWebSocket<
             });
     }
 
+    diffuserInformation(info : InformationDistribution): void {
+        console.log("- Diffusion d'information à tous les utilisateurs du reseau");
+        console.log("  - du message brut : " + info.brut());
+        console.log("  - du message net : " + info.representation());
+        this.populations.domaine().forEach(identifiantSommet => {
+            table(this.populations.valeur(identifiantSommet).identification)
+                .iterer((c, u) => {
+                    this.envoyerInformationAClient(info, u.ID);
+                });
+        });
+    }
+
     /**
      * Traite le message par les actions suivantes :
      * - cas d'un message de type TODO:
@@ -444,7 +470,8 @@ class CanalJeu1Distribution extends CanalServeurClientWebSocket<
      * @param m message reçu du client au format JSON.
      */
     traiterMessage(m: FormatMessageDistribution): void {
-        if (this.connexions.taille() < 15) {
+        // TODO : Replace by config value
+        if (this.connexions.taille() < this.nombreConnexions) {
             let d = dateMaintenant();
             this.envoyerMessageErreur(compositionErreurDistribution(
                 "Jeu de distribution - Réseau incomplet ! Il est impossible d'envoyer des messages",
@@ -613,6 +640,10 @@ class CanalJeu1Distribution extends CanalServeurClientWebSocket<
         this.connexions.retirer(ID_util);
         this.configurationsUtilisateursConnectes.retirer(ID_util);
         this.configurationsUtilisateursAConnecter.ajouter(ID_util, this.configuration());
+
+        // Diffuser le nombre d'utilisateurs connectés dans la reseau a tous les connexions
+        const d = dateMaintenant();
+        this.diffuserInformation(compositionInformationDistribution(this.connexions.taille()+"", d.val(), TypeInformationDistribution.NOM_CONNEXIONS));
     }
 }
 
@@ -655,6 +686,7 @@ export class ServeurCanauxJeu1Distribution<S extends ServeurApplications>
         TableIdentificationMutable<"message", Domaine, FormatDomaine>;
     private verrous:
         TableIdentificationMutable<"message", Utilisateur, FormatUtilisateur>;
+    private nombreConnexions: number
 
     /**
      * Constructeur du serveur de canaux à partir d'un aiguilleur.
@@ -687,7 +719,7 @@ export class ServeurCanauxJeu1Distribution<S extends ServeurApplications>
         configServeur.engendrerPopulations(effectifs);
         configServeur.engendrerConsignes();
         this.configuration = configServeur;
-
+        this.nombreConnexions = nombreUtilisateurs;
         this._configsUtilisateursConnectes
             = creerTableIdentificationMutableVide('utilisateur', (c) => c.val());
 
@@ -723,7 +755,7 @@ export class ServeurCanauxJeu1Distribution<S extends ServeurApplications>
             this.autorisationsVerrouillage,
             this.verrous,
             this.configuration.populations(),
-            chemin, connexion, adresseIPClient);
+            chemin, connexion, adresseIPClient, this.nombreConnexions );
     }
 
     /**

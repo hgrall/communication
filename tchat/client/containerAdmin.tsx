@@ -127,6 +127,13 @@ const ObjetAdmin = styled(ObjetAdminBrut)`
     align-items: center;
 `;
 
+const TexteInformation = styled.p`
+    color: ${CADRE};
+    font-size: 25px;
+    padding: 20px;
+    text-align: center;
+`;
+
 class ContenuContainerAdmin extends React.Component<ProprietesAdmin, {}> {
     render() {
         return (
@@ -139,20 +146,20 @@ class ContenuContainerAdmin extends React.Component<ProprietesAdmin, {}> {
                         </Pseudo>
                     </SujetAdminContainer>
                 </SujetAdmin>
-                <h2> Nombre de connexions: {this.props.nombreConnexions }/5 </h2>
-                Choisissez un destinataire :
+                <TexteInformation> Choisissez un destinataire : </TexteInformation>
                 {this.props.objets.map(i =>
                     <ObjetAdmin choix={this.props.selection.nom === i.nom}
                         onClick={() => this.props.modifSelection(i)}
                         fond={i.fond}
                         nom={i.nom} />
                 )}
-                ou tous les destinataires :
+                <TexteInformation> Ou tous les destinataires :</TexteInformation>
                 <ObjetAdmin choix={this.props.selection.nom === this.props.tous.nom}
                     onClick={() => this.props.modifSelection(this.props.tous)}
                     fond={this.props.tous.fond}
                     nom={this.props.tous.nom}
                 />
+                <TexteInformation> Nombre de connexions: {this.props.nombreConnexions }/5 </TexteInformation>
             </div>
         );
     }

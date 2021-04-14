@@ -1,25 +1,25 @@
 import {
     FormatMessage, Message,
     FormatErreurRedhibitoire, ErreurRedhibitoireParEnveloppe,
-    FormatConfigurationInitiale, ConfigurationParEnveloppe
+    FormatConfigurationInitiale, ConfigurationParEnveloppe, FormatInformation
 } from "../reseau/formats";
 
 export interface CanalClientServeur<
     FErr extends FormatErreurRedhibitoire, FConf extends FormatConfigurationInitiale,
-    FMsg extends FormatMessage,
+    FMsg extends FormatMessage, FInfo extends  FormatInformation,
     EtMsg extends string> {
     envoyerMessage(msg: Message<FMsg, EtMsg>): void;
     enregistrerTraitementMessageRecu(traitement: (m: FMsg) => void): void;
     enregistrerTraitementConfigurationRecue(traitement: (c: FConf) => void): void;
     enregistrerTraitementErreurRecue(traitement: (e: FErr) => void): void
-    enregistrerTraitementInformationRecue(traitement: (e: FMsg) => void): void
+    enregistrerTraitementInformationRecue(traitement: (i: FInfo) => void): void
 }
 
 class CanalClientServeurWebSocket<
     FErr extends FormatErreurRedhibitoire, FConf extends FormatConfigurationInitiale,
-    FMsg extends FormatMessage,
+    FMsg extends FormatMessage, FInfo extends  FormatInformation,
     EtMsg extends string
-    > implements CanalClientServeur<FErr, FConf, FMsg, EtMsg>
+    > implements CanalClientServeur<FErr, FConf, FMsg, FInfo, EtMsg>
 {
     adresse: string;
     lienServeur: WebSocket;
@@ -41,6 +41,9 @@ class CanalClientServeurWebSocket<
                 return;
             }
             if (msg.erreurRedhibitoire !== undefined) {
+                return;
+            }
+            if (msg.information!== undefined) {
                 return;
             }
             traitement(<FMsg>msg);
@@ -67,24 +70,21 @@ class CanalClientServeurWebSocket<
         });
     };
 
-    enregistrerTraitementInformationRecue(traitement: (m: FMsg) => void): void {
+    enregistrerTraitementInformationRecue(traitement: (m: FInfo) => void): void {
         this.lienServeur.addEventListener("message", function (e: MessageEvent) {
-            let msg = JSON.parse(e.data);
-            if (msg.configurationInitiale !== undefined) {
+            let contenuJSON = JSON.parse(e.data);
+            if (contenuJSON.information=== undefined) {
                 return;
             }
-            if (msg.erreurRedhibitoire !== undefined) {
-                return;
-            }
-            traitement(<FMsg>msg);
+            traitement(<FInfo>contenuJSON);
         });
     };
 };
 
 export function creerCanalClient<
     FErr extends FormatErreurRedhibitoire, FConf extends FormatConfigurationInitiale,
-    FMsg extends FormatMessage, EtMsg extends string
-    >(adresse: string): CanalClientServeur<FErr, FConf, FMsg, EtMsg> {
-    return new CanalClientServeurWebSocket<FErr, FConf, FMsg, EtMsg>(adresse);
+    FMsg extends FormatMessage,  FInfo extends  FormatInformation, EtMsg extends string
+    >(adresse: string): CanalClientServeur<FErr, FConf, FMsg,FInfo, EtMsg> {
+    return new CanalClientServeurWebSocket<FErr, FConf, FMsg,FInfo, EtMsg >(adresse);
 }
 

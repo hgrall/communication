@@ -1,7 +1,15 @@
 import {
-  FormatMessage, MessageParEnveloppe, Message,
-  FormatConfigurationInitiale, ConfigurationParEnveloppe, Configuration,
-  FormatErreurRedhibitoire, ErreurRedhibitoireParEnveloppe, ErreurRedhibitoire
+  FormatMessage,
+  MessageParEnveloppe,
+  Message,
+  FormatConfigurationInitiale,
+  ConfigurationParEnveloppe,
+  Configuration,
+  FormatErreurRedhibitoire,
+  ErreurRedhibitoireParEnveloppe,
+  ErreurRedhibitoire,
+  FormatInformation,
+  InformationParEnveloppe
 } from "../../bibliotheque/reseau/formats";
 
 import {
@@ -1086,9 +1094,58 @@ export function compositionErreurDistribution(msg: string, date: FormatDateFr, t
     type:type
   });
 }
+/**
+ * Type des messages d'information pour le jeu 1 de distribution.
+ * - NOM_CONNEXIONS : Nombre de connexions actives sur le serveur
+ */
+export enum TypeInformationDistribution {
+  NOM_CONNEXIONS
+}
 
+/**
+ * Description JSON d'un message d'information, qui contient les attributs suivants :
+ * - type d'information',
+ * - contenu du message,
+ * - date
+ */
+export interface FormatInformationDistribution extends FormatInformation {
+  readonly contenu: string;
+  readonly date: FormatDateFr;
+  readonly type: TypeInformationDistribution;
 
+}
 
+export type EtiquetteInformationDistribution = 'messageInformation' | 'date';
+
+export class InformationDistribution extends InformationParEnveloppe<FormatInformationDistribution, EtiquetteInformationDistribution> {
+
+  net(i: EtiquetteInformationDistribution): string {
+    let information = this.val();
+    switch (i) {
+      case 'messageInformation':
+        return information.contenu;
+      case 'date':
+        return dateEnveloppe(information.date).representation();
+    }
+    return jamais(i);
+  }
+  representation(): string {
+    return '[' + this.net('date') + ' : ' + this.net('messageInformation') + ']';
+  }
+}
+
+export function information(info: FormatInformationDistribution): InformationDistribution {
+  return new InformationDistribution(info);
+}
+
+export function compositionInformationDistribution(msg: string, date: FormatDateFr, type: TypeInformationDistribution): InformationDistribution {
+  return new InformationDistribution({
+    information: Unite.ZERO,
+    contenu: msg,
+    date: date,
+    type: type
+  });
+}
 
 
 /*
@@ -1132,7 +1189,7 @@ export enum TypeMessageDistribution {
   PERTE, // ok - C
   DESTRUCT, // ok - C
   ECHEC_VERROU, // ok - C
-  ERREUR_CONNEXIONS = 13
+  INFO
   //ADMIN,
   //NONCONF, // ok
   //SUCCES_INIT,
@@ -1518,30 +1575,5 @@ export function essai(
  */
 export function messageDistribution(msg: FormatMessageDistribution) {
   return new MessageDistribution(msg);
-}
-
-/**
- * Fabrique d'un message pour un essai d'interprétation.
- * Voir le canal "verifier" dans la spécification chimique.
- * @param contenu mot binaire de sept bits représentant l'interprétation du
- *   message.
- */
-export function messageErreur(
-    identifiant: Identifiant<'message'>,
-    id_emetteur: Identifiant<'utilisateur'>,
-    id_origine: Identifiant<'sommet'>,
-    id_destination: Identifiant<'sommet'>,
-    contenu: Mot,
-    date: DateFr
-): MessageDistribution {
-  return new MessageDistribution({
-    ID: identifiant,
-    ID_utilisateur: id_emetteur,
-    ID_origine: id_origine,
-    ID_destination: id_destination,
-    type: TypeMessageDistribution.ERREUR_CONNEXIONS,
-    contenu: contenu.tableauBinaire(),
-    date: date.val()
-  });
 }
 

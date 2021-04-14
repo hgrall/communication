@@ -17,6 +17,7 @@ interface ProprietesAdmin {
     domainesVoisins: ReadonlyArray<DomaineInterface>;
     selection: DomaineInterface;
     modifSelection: (d: DomaineInterface) => void;
+    nombreConnexions : string
 }
 
 const SujetAdmin = styled.div`
@@ -58,6 +59,7 @@ const Retour = styled.div`
     width: 4ex;
     height: 4ex;
 `;
+
 
 enum Role { Emetteur, Recepteur };
 
@@ -102,6 +104,13 @@ const TexteNormal = styled.div`
     font-size: medium;
 `;
 
+const TexteInformation = styled.p`
+    color: ${CADRE};
+    font-size: x-large;
+    padding: 20px;
+    text-align: center;
+`;
+
 interface ProprietesObjetAdmin {
     // see https://github.com/Microsoft/TypeScript/issues/8588
     className?: string;
@@ -141,6 +150,10 @@ const ObjetAdmin = styled(ObjetAdminBrut)`
     flex-direction: row;
     justify-content: center;
     align-items: center;
+  p {
+    justify-content: left;
+    align-items: center;
+  }
 `;
 
 class ContainerAdminBrut extends React.Component<ProprietesAdmin, {}> {
@@ -183,7 +196,7 @@ class ContainerAdminBrut extends React.Component<ProprietesAdmin, {}> {
                         </TexteXLarge>
                     </SujetAdminContainer>
                 </SujetAdmin>
-                Sélectionner le domaine voisin destinataire :
+                <TexteInformation>Sélectionner le domaine voisin destinataire :</TexteInformation>
                 {this.props.domainesVoisins.map(i =>
                     <ObjetAdmin choix={this.props.selection.domaine === i.domaine}
                         onClick={() => this.props.modifSelection(i)}
@@ -191,6 +204,7 @@ class ContainerAdminBrut extends React.Component<ProprietesAdmin, {}> {
                         nomDomaine={mot(i.domaine.nom).representation()}
                         key={i.domaine.ID.val} />
                 )}
+                <TexteInformation>Nombre de connexions : {this.props.nombreConnexions}/10</TexteInformation>
             </div>
         );
     }

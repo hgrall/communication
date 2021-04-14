@@ -51,7 +51,8 @@ import {
 } from "../../bibliotheque/communication/serveurApplications";
 
 import { dateMaintenant } from "../../bibliotheque/types/date"
-import {MessageParEnveloppe} from "../../bibliotheque/reseau/formats";
+import {FormatInformation, MessageParEnveloppe} from "../../bibliotheque/reseau/formats";
+import {EtiquetteInformationDistribution} from "../../distribution/commun/echangesJeu1Distribution";
 
 /**
  * Canal de communication entre un client et le serveur, pour le tchat,
@@ -102,7 +103,7 @@ class CanalTchat extends CanalServeurClientWebSocket<
     FormatErreurTchat, EtiquetteErreurTchat,
     FormatConfigurationTchat, EtiquetteConfigurationTchat,
     FormatMessageTchat, EtiquetteMessageTchat,
-    ConfigurationTchat
+    ConfigurationTchat, FormatInformation, EtiquetteInformationDistribution
     >
 {
     /**

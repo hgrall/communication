@@ -32,7 +32,7 @@ import {
   messageDemandeDeverrouillage,
   transmission,
   essai,
-  TypeErreurDistribution
+  TypeErreurDistribution, FormatInformationDistribution, TypeInformationDistribution
 } from "../commun/echangesJeu1Distribution";
 
 import { Admin } from "./admin";
@@ -53,7 +53,9 @@ import { mot } from "../../bibliotheque/types/binaire";
 interface CanalDistribution extends CanalClientServeur<
   FormatErreurDistribution,
   FormatConfigurationDistribution,
-  FormatMessageDistribution, EtiquetteMessageDistribution> { }
+  FormatMessageDistribution,
+  FormatInformationDistribution,
+  EtiquetteMessageDistribution > { }
 
 const ApresAdmin = styled.div`
     background: ${CADRE};
@@ -102,6 +104,7 @@ interface EtatCorps {
   informations: MessageInformant[]; // Identification par l'identifiant du message.
   formulaireMessage: FormatOption<FormulaireMessage>;
   formulaireEssai: FormatOption<FormulaireEssai>;
+  nombreConnexions: string;
 }
 
 const ID_INCONNU: string = "?";
@@ -146,6 +149,7 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
       informations: [],
       formulaireMessage: rienOption<FormulaireMessage>().val(),
       formulaireEssai: rienOption<FormulaireMessage>().val(),
+      nombreConnexions: "0",
     };
     this.modifierSelection = this.modifierSelection.bind(this);
     this.envoyerMessageInitial = this.envoyerMessageInitial.bind(this);
@@ -402,6 +406,7 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
               consigne={this.consigne}
               domainesVoisins={this.domainesVoisins.image()}
               selection={this.state.selection} modifSelection={this.modifierSelection}
+              nombreConnexions={this.state.nombreConnexions}
             />
             <ApresAdmin />
             <Action
@@ -725,6 +730,10 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
           this.modifierEtatInterface(EtatInterfaceJeu1.ERRONE);
           return;
       }
+    });
+    console.log("- du traitement d'une information");
+    this.canal.enregistrerTraitementInformationRecue((i : FormatInformationDistribution) => {
+      this.setState({nombreConnexions: i.contenu});
     });
 
   }

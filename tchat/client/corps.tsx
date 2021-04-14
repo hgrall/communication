@@ -39,13 +39,14 @@ import {
     configurationTchat,
     FormatErreurTchat, erreurTchat
 } from "../commun/echangesTchat";
+import {FormatInformationDistribution} from "../../distribution/commun/echangesJeu1Distribution";
 
 /**
  * Interface définissant un canal de communication pour le tchat, côté client.
  */
 interface CanalTchat extends CanalClientServeur<FormatErreurTchat,
     FormatConfigurationTchat,
-    FormatMessageTchat, EtiquetteMessageTchat> {
+    FormatMessageTchat, FormatInformationDistribution, EtiquetteMessageTchat> {
 }
 
 const ApresAdmin = styled.div`

@@ -12,7 +12,7 @@ import { creerTableMutableVide, TableMutable } from "../types/table";
 import {
     FormatMessage, Message,
     FormatConfigurationInitiale, Configuration,
-    FormatErreurRedhibitoire, ErreurRedhibitoire,
+    FormatErreurRedhibitoire, ErreurRedhibitoire, Information, FormatInformation,
 } from "../reseau/formats";
 
 import { ServeurApplications } from './serveurApplications';
@@ -54,7 +54,7 @@ export interface CanalServeurClient<
     TC,
     FErr extends FormatErreurRedhibitoire, EtErr extends string,
     FConf extends FormatConfigurationInitiale, EtConf extends string,
-    FMsg extends FormatMessage, EtMsg extends string>
+    FMsg extends FormatMessage, EtMsg extends string, FInfo extends FormatInformation, EtInfo extends string >
     extends ConfigurateurCanalClientServeur {
     /**
      * Connexion réellement utilisée.
@@ -122,8 +122,9 @@ export abstract class CanalServeurClientWebSocket<
     FErr extends FormatErreurRedhibitoire, EtErr extends string,
     FConf extends FormatConfigurationInitiale, EtConf extends string,
     FMsg extends FormatMessage, EtMsg extends string,
-    CFG extends Configuration<FConf, EtConf>>
-    implements CanalServeurClient<websocket.connection, FErr, EtErr, FConf, EtConf, FMsg, EtMsg> {
+    CFG extends Configuration<FConf, EtConf>,
+    FInfo extends FormatInformation, EtInfo extends string >
+    implements CanalServeurClient<websocket.connection, FErr, EtErr, FConf, EtConf, FMsg, EtMsg, FInfo, EtInfo> {
 
     /**
      * Configuration associée au canal.
@@ -244,6 +245,16 @@ export abstract class CanalServeurClientWebSocket<
      */
     envoyerMessageErreur(e: ErreurRedhibitoire<FErr, EtErr>) {
         this.connexionReelle().sendUTF(e.brut());
+    }
+
+    /**
+     * Envoie au client l'information brute en JSON, au format UTF8,
+     * en utilisant la Web Socket associée.
+     * @param e erreur à envoyer.
+     */
+    envoyerMessageInformation(i: Information<FInfo, EtInfo>) {
+        console.log(typeof i);
+        this.connexionReelle().sendUTF(i.brut());
     }
 
 }
