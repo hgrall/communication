@@ -8,7 +8,7 @@ interface ProprietesPastille {
     fond: Couleur;
 }
 
-class PastilleBrute extends React.Component<ProprietesPastille, {}> {
+class PastilleMessageBrute extends React.Component<ProprietesPastille, {}> {
     render() {
         return (
             <div className={this.props.className}>
@@ -17,10 +17,11 @@ class PastilleBrute extends React.Component<ProprietesPastille, {}> {
     }
 }
 
-export const Pastille = styled(PastilleBrute)`
-        flex: none;
-        width: 4ex;
-        height: 4ex;
+export const PastilleMessage = styled(PastilleMessageBrute)`
+        display: inline-block;
+        width: 2ex;
+        height: 2ex;
         border-radius: 100%;
         background-color: ${(props: ProprietesPastille) => props.fond};
+        margin: 0 1ex 0 1ex;
     `;

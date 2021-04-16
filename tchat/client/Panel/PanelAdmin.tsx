@@ -6,7 +6,7 @@ import {FOND, CADRE, TEXTE_PALE} from "../../../bibliotheque/interface/couleur";
 
 import { Individu } from "../typesInterface";
 
-import { Pastille } from "../Pastille/Pastille";
+import { PastilleAdmin } from "../Pastille/PastilleAdmin";
 
 import { Pseudo } from "../Label/Pseudo";
 
@@ -40,6 +40,7 @@ export const SujetAdmin = styled.div`
   min-width: calc(24vw);
 
   display: flex;
+  position: relative;
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
@@ -58,8 +59,6 @@ export const SujetAdminContainer = styled.div`
 `;
 
 
-
-
 class ContenuPanelAdmin extends React.Component<ProprietesAdmin, {}> {
     render() {
         return (
@@ -67,7 +66,7 @@ class ContenuPanelAdmin extends React.Component<ProprietesAdmin, {}> {
                 <Scrollbars style={{ width: "24vw", height: "100vh" }}>
                 <SujetAdmin>
                     <SujetAdminContainer>
-                        <Pastille fond={this.props.sujet.fond} />
+                        <PastilleAdmin fond={this.props.sujet.fond} />
                         <Pseudo>
                             {this.props.sujet.nom}
                         </Pseudo>
@@ -94,7 +93,6 @@ class ContenuPanelAdmin extends React.Component<ProprietesAdmin, {}> {
 }
 
 export const PanelAdmin = styled(ContenuPanelAdmin)`
-    background: ${FOND};
     position: absolute;
     top: 0;
     left: 0;

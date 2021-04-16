@@ -2,16 +2,17 @@ import * as React from "react";
 
 import styled from "styled-components";
 
-import TextareaAutosize from 'react-textarea-autosize';
-
-import { DateFr } from "../../bibliotheque/types/date"
+import { DateFr } from "../../../bibliotheque/types/date"
 
 
-import { Couleur, FOND } from "../../bibliotheque/interface/couleur";
+import { FOND } from "../../../bibliotheque/interface/couleur";
 
-import { Individu, Message } from "./typesInterface";
+import { Individu, Message } from "../typesInterface";
 
-import { ContainerMessageEmis, ContainerMessageRecu, EntreeMessage } from "./containersMessages";
+import { PanneauEntreeMessage } from "./PanneauEntreeMessage";
+
+import { ContainerMessageEmis, ContainerMessageRecu } from "../Message/Message";
+import Scrollbars from "react-custom-scrollbars";
 
 interface ProprietesAction {
     // see https://github.com/Microsoft/TypeScript/issues/8588
@@ -22,12 +23,11 @@ interface ProprietesAction {
     envoiMessage: (m: Message, d: DateFr) => void;
 }
 
-
-
-class ContenuContainerAction extends React.Component<ProprietesAction, {}> {
+class PanneauMessagesBrut extends React.Component<ProprietesAction, {}> {
     render() {
         return (
             <div className={this.props.className}>
+                <Scrollbars style={{ width: "74vw", height: "100vh" }}>
                 {
                     this.props.messages.map((m: Message) =>
                         ((m.emetteur.nom === this.props.sujet.nom) ?
@@ -36,15 +36,13 @@ class ContenuContainerAction extends React.Component<ProprietesAction, {}> {
                         )
                     )
                 }
-                <EntreeMessage sujet={this.props.sujet} destinataire={this.props.selection}
-                    envoiMessage={this.props.envoiMessage} />
+                </Scrollbars>
             </div>
         );
     }
 }
 
-export const ContainerAction = styled(ContenuContainerAction)`
-    background: ${FOND};
+export const PanneauMessages = styled(PanneauMessagesBrut)`
     position: absolute;
     top: 0;
     left: 0;

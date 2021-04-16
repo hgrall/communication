@@ -1,6 +1,6 @@
 import {CADRE, Couleur, SELECTION, TEXTE_INV} from "../../../bibliotheque/interface/couleur";
 import * as React from "react";
-import {Pastille} from "../Pastille/Pastille";
+import {PastilleAdmin} from "../Pastille/PastilleAdmin";
 import { Pseudo } from "../Label/Pseudo";
 import styled from "styled-components";
 
@@ -16,7 +16,7 @@ interface ProprietesObjetAdmin {
 class ButtonDestinataireBrut extends React.Component<ProprietesObjetAdmin, {}> {
     render() {
         return <button className={this.props.className} onClick={this.props.onClick}>
-            <Pastille fond={this.props.fond} />
+            <PastilleAdmin fond={this.props.fond} />
             <Pseudo>{this.props.nom}</Pseudo>
         </button>;
     }

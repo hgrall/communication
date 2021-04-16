@@ -5,7 +5,10 @@ import styled from "styled-components";
 import {Individu, Message} from "./typesInterface";
 
 import { PanelAdmin } from "./Panel/PanelAdmin";
-import {Action} from "./action";
+
+import { PanneauMessages } from "./Panel/PaneauMessages";
+
+import { PanneauEntreeMessage } from "./Panel/PanneauEntreeMessage";
 
 import {
     Couleur, COUPLE_FOND_ENCRE_SUJET, COUPLE_FOND_ENCRE_TOUS, COUPLE_FOND_ENCRE_INCONNU,
@@ -223,9 +226,16 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
                                nombreConnexions={this.state.nombreConnexions}
                         />
                         <ApresAdmin/>
-                        <Action sujet={this.individuSujet} messages={this.state.messages}
-                                selection={this.state.selection} envoiMessage={this.envoyerMessage}/>
-                        <ApresAction/>
+                        <div className='Panel Izquierda'>
+                            <div className='Mensajes'>
+                            <PanneauMessages sujet={this.individuSujet} messages={this.state.messages}
+                                    selection={this.state.selection} envoiMessage={this.envoyerMessage}/>
+                            </div>
+                            <div className='Entrada Mensajes'>
+                            <PanneauEntreeMessage sujet={this.individuSujet} destinataire={this.state.selection}
+                                                  envoiMessage={this.envoyerMessage}/>
+                            </div>
+                        </div>
                     </div>
                 );
             case EtatInterfaceTchat.INITIAL:

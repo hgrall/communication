@@ -350,7 +350,7 @@ const ContainerAdmin = styled(ContenuContainerAdmin)`
 `;
 
 /**
- * Pastille : interface, class et style (CSS)
+ * PastilleAdmin : interface, class et style (CSS)
  * */
 interface ProprietesPastille {
     className?: string;
