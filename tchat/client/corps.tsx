@@ -3,7 +3,8 @@ import * as React from "react";
 import styled from "styled-components";
 
 import {Individu, Message} from "./typesInterface";
-import {Admin} from "./admin";
+
+import { PanelAdmin } from "./Panel/PanelAdmin";
 import {Action} from "./action";
 
 import {
@@ -214,7 +215,7 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
             case EtatInterfaceTchat.NORMAL:
                 return (
                     <div className={this.props.className}>
-                        <Admin sujet={this.individuSujet}
+                        <PanelAdmin sujet={this.individuSujet}
                                objets={this.individusObjets.image()}
                                tous={this.toutIndividu}
                                selection={this.state.selection}
