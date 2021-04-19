@@ -32,3 +32,16 @@
 1. Etude fichier de configuration de l'application
 2. Documentation des nouveaux features
 3. Creation du fichier MessagesReseau avec un tutoriel qui explique le fonctionnement de l'envoie de message de l'application
+
+## Jour 9 (14/04)
+1. Finalization affichage de la taille du réseau
+2. Reunion avec Lotfi
+
+## Jour 10 (15/04)
+1. Finalization de la documentation et creation de l'UML.
+2. Étude pour l'amélioration du code. 
+3. Ajout des UML des paquets de l'application
+
+## Jour 11 (16/04)
+1. Tests integration et documentation
+2. Organization fichiers client tchat 
