@@ -44,6 +44,7 @@ import {
     FormatErreurTchat, erreurTchat
 } from "../commun/echangesTchat";
 import {FormatInformationDistribution} from "../../distribution/commun/echangesJeu1Distribution";
+import {Action} from "./action";
 
 /**
  * Interface définissant un canal de communication pour le tchat, côté client.
@@ -226,16 +227,9 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
                                nombreConnexions={this.state.nombreConnexions}
                         />
                         <ApresAdmin/>
-                        <div className='Panel Izquierda'>
-                            <div className='Mensajes'>
-                            <PanneauMessages sujet={this.individuSujet} messages={this.state.messages}
-                                    selection={this.state.selection} envoiMessage={this.envoyerMessage}/>
-                            </div>
-                            <div className='Entrada Mensajes'>
-                            <PanneauEntreeMessage sujet={this.individuSujet} destinataire={this.state.selection}
-                                                  envoiMessage={this.envoyerMessage}/>
-                            </div>
-                        </div>
+                        <Action sujet={this.individuSujet} messages={this.state.messages}
+                                selection={this.state.selection} envoiMessage={this.envoyerMessage}/>
+                        <ApresAction/>
                     </div>
                 );
             case EtatInterfaceTchat.INITIAL:
