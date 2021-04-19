@@ -12,7 +12,7 @@ interface ProprietesEnvoi {
     onClick: () => void;
 }
 
-class EnvoiBrut extends React.Component<ProprietesEnvoi> {
+class ButtonEnvoiBrut extends React.Component<ProprietesEnvoi> {
     render() {
         return (
             <button className={this.props.className}
@@ -23,7 +23,7 @@ class EnvoiBrut extends React.Component<ProprietesEnvoi> {
     }
 }
 
-const Envoi = styled(EnvoiBrut)`
+export const ButtonEnvoi = styled(ButtonEnvoiBrut)`
         flex: none;
         background-color: ${(props: ProprietesInterlocuteur) => props.fond};
         color : ${(props: ProprietesInterlocuteur) => props.encre};

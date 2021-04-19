@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 export enum Role { Emetteur, Recepteur };
 
-interface ProprietesInterlocuteur {
+export interface ProprietesInterlocuteur {
     // see https://github.com/Microsoft/TypeScript/issues/8588
     className?: string;
     fond: Couleur;

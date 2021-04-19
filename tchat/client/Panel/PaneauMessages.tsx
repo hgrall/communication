@@ -2,16 +2,18 @@ import * as React from "react";
 
 import styled from "styled-components";
 
-import TextareaAutosize from 'react-textarea-autosize';
-
 import { DateFr } from "../../../bibliotheque/types/date"
 
 
-import { Couleur, FOND } from "../../../bibliotheque/interface/couleur";
+import { FOND } from "../../../bibliotheque/interface/couleur";
 
-import { Individu, Message } from "../typesInterface";
+import { Individu, Message } from "../Helpers/typesInterface";
 
-import { ContainerMessageEmis, ContainerMessageRecu, EntreeMessage } from "../containersMessage";
+import { ContainerMessageEmis, ContainerMessageRecu } from "../Message/Message";
+
+import { EntreeMessage } from '../ChampDeTexte/EntreeMessage'
+
+import Scrollbars from "react-custom-scrollbars";
 
 interface ProprietesAction {
     // see https://github.com/Microsoft/TypeScript/issues/8588
@@ -24,26 +26,37 @@ interface ProprietesAction {
 
 
 
-class ContenuContainerAction extends React.Component<ProprietesAction, {}> {
+export class PanneauMessages extends React.Component<ProprietesAction, {}> {
     render() {
         return (
-            <div className={this.props.className}>
-                {
-                    this.props.messages.map((m: Message) =>
-                        ((m.emetteur.nom === this.props.sujet.nom) ?
-                            <ContainerMessageEmis message={m} /> :
-                            <ContainerMessageRecu message={m} />
-                        )
-                    )
-                }
-                <EntreeMessage sujet={this.props.sujet} destinataire={this.props.selection}
-                    envoiMessage={this.props.envoiMessage} />
-            </div>
+            <PanneauMessageContainer className={this.props.className}>
+                <Scrollbars style={{ width: "74vw", height: "100vh" }}>
+                    <MessagesContainer>
+                        {
+                            this.props.messages.map((m: Message) =>
+                                ((m.emetteur.nom === this.props.sujet.nom) ?
+                                    <ContainerMessageEmis message={m} /> :
+                                    <ContainerMessageRecu message={m} />
+                                )
+                            )
+                        }
+                        <EntreeMessage sujet={this.props.sujet} destinataire={this.props.selection}
+                            envoiMessage={this.props.envoiMessage} />
+                    </MessagesContainer>
+                </Scrollbars>
+            </PanneauMessageContainer>
         );
     }
 }
 
-export const PanneauMessages = styled(ContenuContainerAction)`
+export const PanneauMessageContainer = styled.div`
+    background: ${FOND};
+    position: fixed;
+    top: 0;
+    right: 1vw;
+`;
+
+export const MessagesContainer = styled.div`
     background: ${FOND};
     position: absolute;
     top: 0;

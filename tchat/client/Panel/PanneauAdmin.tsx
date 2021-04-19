@@ -4,7 +4,7 @@ import styled from "styled-components"
 
 import {FOND, CADRE, TEXTE_PALE} from "../../../bibliotheque/interface/couleur";
 
-import { Individu } from "../typesInterface";
+import { Individu } from "../Helpers/typesInterface";
 
 import { PastilleAdmin } from "../Pastille/PastilleAdmin";
 
@@ -26,12 +26,6 @@ interface ProprietesAdmin {
     modifSelection: (i: Individu) => void;
     nombreConnexions : string
 }
-
-const Cachet = styled.div`
-    font-size: x-small;
-    color: ${TEXTE_PALE};
-    text-align: right;
-`;
 
 export const SujetAdmin = styled.div`
   background: ${FOND};
@@ -92,7 +86,7 @@ class ContenuPanelAdmin extends React.Component<ProprietesAdmin, {}> {
     }
 }
 
-export const PanelAdmin = styled(ContenuPanelAdmin)`
+export const PanneauAdmin = styled(ContenuPanelAdmin)`
     position: absolute;
     top: 0;
     left: 0;

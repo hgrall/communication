@@ -2,13 +2,12 @@ import * as React from "react";
 
 import styled from "styled-components";
 
-import {Individu, Message} from "./typesInterface";
+import {Individu, Message} from "./Helpers/typesInterface";
 
-import { PanelAdmin } from "./Panel/PanelAdmin";
+import { PanneauAdmin } from "./Panel/PanneauAdmin";
 
 import { PanneauMessages } from "./Panel/PaneauMessages";
 
-import { PanneauEntreeMessage } from "./Panel/PanneauEntreeMessage";
 
 import {
     Couleur, COUPLE_FOND_ENCRE_SUJET, COUPLE_FOND_ENCRE_TOUS, COUPLE_FOND_ENCRE_INCONNU,
@@ -35,8 +34,7 @@ import {
 import {CanalClientServeur, creerCanalClient} from "../../bibliotheque/communication/client";
 
 import {
-    NoeudTchat, noeudTchat,
-    SommetTchatParEnveloppe, sommetTchat,
+    NoeudTchat,
     messageCommunication,
     TypeMessageTchat, FormatMessageTchat, EtiquetteMessageTchat, MessageTchat, messageTchat,
     FormatConfigurationTchat,
@@ -44,7 +42,6 @@ import {
     FormatErreurTchat, erreurTchat
 } from "../commun/echangesTchat";
 import {FormatInformationDistribution} from "../../distribution/commun/echangesJeu1Distribution";
-import {Action} from "./action";
 
 /**
  * Interface définissant un canal de communication pour le tchat, côté client.
@@ -219,15 +216,15 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
             case EtatInterfaceTchat.NORMAL:
                 return (
                     <div className={this.props.className}>
-                        <PanelAdmin sujet={this.individuSujet}
-                               objets={this.individusObjets.image()}
-                               tous={this.toutIndividu}
-                               selection={this.state.selection}
-                               modifSelection={this.modifierSelection}
-                               nombreConnexions={this.state.nombreConnexions}
+                        <PanneauAdmin sujet={this.individuSujet}
+                                      objets={this.individusObjets.image()}
+                                      tous={this.toutIndividu}
+                                      selection={this.state.selection}
+                                      modifSelection={this.modifierSelection}
+                                      nombreConnexions={this.state.nombreConnexions}
                         />
                         <ApresAdmin/>
-                        <Action sujet={this.individuSujet} messages={this.state.messages}
+                        <PanneauMessages sujet={this.individuSujet} messages={this.state.messages}
                                 selection={this.state.selection} envoiMessage={this.envoyerMessage}/>
                         <ApresAction/>
                     </div>

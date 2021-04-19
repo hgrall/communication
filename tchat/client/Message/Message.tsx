@@ -1,4 +1,4 @@
-import {Message} from "../typesInterface";
+import {Message} from "../Helpers/typesInterface";
 import styled from "styled-components";
 import {
     Couleur,
