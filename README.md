@@ -4,6 +4,10 @@
   - installation de *npm*
 
 - dépendances spécifiées dans ```package.json``
+  ```
+    npm install
+    npm install --legacy-peer-deps // / message suivant : You must install peer dependencies yourself.
+  ```
 
 # compilation
 

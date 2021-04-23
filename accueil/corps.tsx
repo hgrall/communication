@@ -101,7 +101,7 @@ function AccessPage(props: AccessPageProps) {
             <Title>Code d'accès :</Title>
             <Form>
                 <Input type="text" onChange={e => setCode(e.target.value)}/>
-                <p>Vous n'avez pas un code ? Contactez l'administrateur.</p>
+                <p>Vous n'avez pas de code d'accès ? Contactez l'administrateur.</p>
                 <Button type="submit" onClick={() => props.onClick(code)}>Envoyer</Button>
             </Form>
         </Wrapper>
@@ -123,37 +123,37 @@ function JeuChoixPage(props: JeuChoixPageProps) {
 
     return (
         <Wrapper>
-            <Title>Quel jeu vous voulez jouer ?</Title>
+            <Title>A quel jeu voulez-vous jouer ?</Title>
             <Form action={lienEtoile}>
-                <Button type="submit" name="code" value={props.code}>Tchat Etoile</Button>
+                <Button type="submit" name="code" value={props.code}>Tchat en étoile</Button>
             </Form>
             <Form action={lienAnneau}>
-                <Button type="submit" name="code" value={props.code}>Tchat Anneau</Button>
+                <Button type="submit" name="code" value={props.code}>Tchat en anneau</Button>
             </Form>
             <Form action={lienJeu1}>
                 <Button type="submit" name="code" value={props.code}>Distribution</Button>
             </Form>
             <Form action={lienAdmin}>
-                <Button type="submit" name="code" value={props.code}>Page Admin</Button>
+                <Button type="submit" name="code" value={props.code}>Page d'administration</Button>
             </Form>
             <Hr/>
             <Form>
-                <BackButton type="submit" onClick={props.goBack}>Changer le code d'accès</BackButton>
+                <BackButton type="submit" onClick={props.goBack}>Retour à l'accueil pour changer de code d'accès</BackButton>
             </Form>
         </Wrapper>
     );
 }
 
-interface AccueilState {
-    hasCode: boolean,
+interface EtatAccueil {
+    aCode: boolean,
     code: string,
 }
 
-export class Corps extends React.Component<{}, AccueilState> {
+export class Corps extends React.Component<{}, EtatAccueil> {
     constructor(props: {}) {
         super(props);
         this.state = {
-            hasCode: false, //aCode
+            aCode: false, // pas de code
             code: "",
         };
     }
@@ -164,17 +164,17 @@ export class Corps extends React.Component<{}, AccueilState> {
             codesValides = process.env.CODES.split(",");
 
         if (codesValides.includes(code))
-            this.setState({hasCode: true, code: code});
+            this.setState({aCode: true, code: code});
         else
             alert("Ce code n'est pas valide !");
     }
 
     goBackAccessPage() {
-        this.setState({hasCode: false, code: ""});
+        this.setState({aCode: false, code: ""});
     }
 
     render() {
-        if (!this.state.hasCode) // demander code d'accès
+        if (!this.state.aCode) // demander code d'accès
             return (
                 <AccessPage onClick={(code:string) => this.handleSubmit(code)}/>
             );
