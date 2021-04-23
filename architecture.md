@@ -1,0 +1,24 @@
+# Structure générale
+
+- applications/applicationsMerite : fonction principale côté serveur
+  - calcul du port
+  - initialisation du serveur d'applications
+    - spécification du répertoire des scripts js embarqués
+    - démarrage du serveur d'applications
+    - définition des url pour les applications 
+      - chemin : 5 tchats en anneau, 5 tchats en étoile, 1 jeu de distribution, 1 console d'administration pour le jeu de distribution, accueil, administration, log
+        - /tchat/etoileX (X := 0, ..., 4)
+        - /tchat/anneauX
+        - /jeu1/distribution0
+        - /jeu1/distribution0/admin
+        - /
+        - /admin
+        - /admin/logs
+      - ressource html : tchat, jeu 1 de distribution, administration du jeu de distribution, accueil, administration, log
+        - interfaceTchat.html
+        - interfaceJeu1Distribution.html
+        - interfaceAdminJeu1Distribution.html
+        - interfaceAccueil.html
+        - interfaceAdmin.html
+        - admin.log
+  - initialisation de l'aiguilleur associé au serveur d'applications pour les connexions par Web Sockets

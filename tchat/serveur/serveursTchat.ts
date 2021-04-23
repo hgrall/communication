@@ -291,9 +291,8 @@ export class ServeurCanauxTchat<S extends ServeurApplications>
      */
     private _reseauxConnectes: ReseauTchatMutable;
     /**
-     * Table associant à un identificateur de sommet le canal tchat. Elle est
-     * centralisée par le serveur de canaux et partagée par tous les canaux.
-     * Elle aurait pu être décomposée par application de tchat (par chemin donc).
+     * Table associant à un identificateur de sommet le canal tchat. * Elle est centralisée par le serveur de canaux et partagée par * tous les canaux. Elle aurait pu être décomposée par 
+     * application de tchat (par chemin donc).
      */
     private _connexions: TableIdentificationMutable<'sommet', CanalTchat, CanalTchat>;
     /**
@@ -314,8 +313,8 @@ export class ServeurCanauxTchat<S extends ServeurApplications>
                 'sommet', (x) => x);
     }
     /**
-     * Fabrique un canal à partir des arguments passés et en transmettant
-     * l'aiguilleur.
+     * Fabrique un canal à partir des arguments passés et en 
+     * transmettant l'aiguilleur.
      * @param chemin chemin sur l'hôte.
      * @param connexion connexion par Web Socket.
      * @param adresseIPClient adresse IP du client.

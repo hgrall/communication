@@ -16,7 +16,7 @@ import {
 } from "../reseau/formats";
 
 import { ServeurApplications } from './serveurApplications';
-import {obtenirConfig, verifierCodedAcces} from "./securite";
+import {obtenirConfig, codeAccesEstValide} from "./securite";
 import {MAX_ECOLES} from "../../applications/applicationsMerite";
 
 /**
@@ -307,16 +307,18 @@ export abstract class ServeurAbstraitCanaux<S extends ServeurApplications, TC>
  * - le type du serveur d'applications,
  * - le type de connexions (typiquement des Web Sockets),
  * - le type des canaux,
- * - les types associés aux erreurs, aux configurations et aux messages.
- * Un aiguilleur associe à un chemin un serveur de canaux, qui produira
- * les canaux de communication utilisés entre le serveur et les clients
- * s'adressant au serveur par ce chemin.
+ * - les types associés aux erreurs, aux configurations et aux
+ * messages.
+ * Un aiguilleur associe à un chemin un serveur de canaux, qui
+ * produira les canaux de communication utilisés entre le serveur et 
+ * les clients s'adressant au serveur par ce chemin.
  * @param S serveur d'applications.
  * @param TC type des connexions.
  */
 export interface Aiguilleur<S extends ServeurApplications, TC> {
     /**
-     * Enregistre un aiguillage particulier, déterminé par les arguments,
+     * Enregistre un aiguillage particulier, déterminé par les  
+     * arguments,
      * un chemin et un serveur de canaux.
      * @param chemin
      * @param serveurCanaux
@@ -331,7 +333,8 @@ export interface Aiguilleur<S extends ServeurApplications, TC> {
     demarrer(serveurAppli: S): void;
 
     /**
-     * Traite la requête initiale du client, donnant lieu à la création du canal.
+     * Traite la requête initiale du client, donnant lieu à la 
+     * création du canal.
      */
     traiterRequeteInitiale(
         chemin: string,
@@ -343,9 +346,9 @@ export interface Aiguilleur<S extends ServeurApplications, TC> {
 }
 
 /**
- * Aiguilleur abstrait implémenté en utilisant des Web Sockets. Il est
+ * Aiguilleur implémenté en utilisant des Web Sockets. Il est
  * paramétré par le serveur d'applications et le type des canaux,
- * associés à des Web Sockets. Il reste à implémenter la méthode "aiguiller".
+ * associés à des Web Sockets. 
  */
 export class AiguilleurWebSocket<S extends ServeurApplications>
     implements Aiguilleur<S, websocket.connection>
@@ -358,15 +361,16 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
     private serveursInitialises: string[] = [];
 
     /**
-     * Table réalisant l'aiguillage, associant à un chemin un serveur de canaux.
+     * Table réalisant l'aiguillage, associant à un chemin un serveur
+     * de canaux.
      */
     private aiguillageServeursCanaux
         : TableMutable<ServeurCanaux<websocket.connection>,
         ServeurCanaux<websocket.connection>>;
 
     /**
-     * Constructeur de l'aiguilleur à partir d'un serveur d'applications,
-     * initialisant l'aiguillage par une table vide.
+     * Constructeur de l'aiguilleur à partir d'un serveur
+     * d'applications, initialisant l'aiguillage par une table vide.
      * @param serveurAppli serveur d'applications associé.
      */
     constructor(
@@ -389,38 +393,52 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
 
     /**
      * Démarre l'aiguilleur par les actions suivantes :
-     * - récupération du serveur Http associé au serveur d'applications,
-     * - création d'un serveur pour Web Socket, attaché au serveur Http,
-     * - configuration de ce serveur pour traiter les événements "request" en
-     *   définissant une fonction de traitement des requêtes :
+     * - récupération du serveur Http associé au serveur
+     * d'applications,
+     * - création d'un serveur pour Web Socket, attaché au serveur
+     *  Http,
+     * - configuration de ce serveur pour traiter les événements
+     *  "request" en définissant une fonction de traitement des
+     * requêtes :
      *   - détermination du chemin et de l'adresse IP du client
      *     à partir de la requête,
-     *   - acceptation de la requête ou rejet si au chemin n'est associé aucun
-     *     serveur de canaux,
-     *   - récupération dans la table d'aiguillage du serveur de canaux associé
-     *     à ce chemin, pour traiter la requête initiale.
+     *   - acceptation de la requête ou rejet si au chemin n'est
+     *     associé aucun serveur de canaux,
+     *   - récupération dans la table d'aiguillage du serveur de
+     *     canaux associé à ce chemin, pour traiter la requête
+     *     initiale.
      */
     demarrer(): void {
-        let serveurHttp: http.Server = this.serveurAppli.serveurHttp();
+        let serveurHttp: http.Server 
+            = this.serveurAppli.serveurHttp();
         let cetAiguilleur = this;
         let serveurWS = new websocket.server({
             httpServer: serveurHttp
         });
         serveurWS.on('request', (req: websocket.request) => {
-            let c = req.resourceURL.pathname;
-            let chemin = "";
-            if (typeof c === "string") {
-                chemin = c;
-            } else {
-                chemin = "";
+            
+            const url = req.resourceURL;
+            let cheminURL = (typeof url.pathname === "string") ? 
+                url.pathname : "";
+            if(!url.query){
+                req.reject(401, "Partie requête de l'URL indéfinie.");
+                return;
             }
+            if(typeof url.query === "string"){
+                req.reject(401, "Partie requête de l'URL sans champ code.");
+                return;
+            }
+            if(typeof url.query.code !== "string"){
+                req.reject(401, "Champ code de la partie requête indéfini ou mal défini.");
+                return;
+            }
+            const code : string = url.query.code ;
 
             // Verification du code d'accès
             let nombreUtilisateurs: number;
-            if (verifierCodedAcces(req.resourceURL.query)) {
+            if (codeAccesEstValide(code)) {
                 // Obtenir les configurations (nombre d'utilisateurs)
-                // @ts-ignore
-                nombreUtilisateurs = obtenirConfig(req.resourceURL.query.code);
+                nombreUtilisateurs = obtenirConfig(code);
             } else {
                 req.reject(401, "Code d'accès invalide.");
                 return;
@@ -428,16 +446,16 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
 
             // Modification de chemin selon école associé au code d'accès
             let initialise: boolean;
-            // @ts-ignore
-            [chemin, initialise] = this.attribuerCheminEcole(req.resourceURL.query.code, chemin);
-            console.log("chemin :" + chemin + " ; initialisé : " + initialise);
+            
+            [cheminURL, initialise] = this.attribuerCheminEcole(code, cheminURL);
+            console.log("chemin :" + cheminURL + " ; initialisé : " + initialise);
 
-            if (!cetAiguilleur.aiguillageServeursCanaux.contient(chemin)) {
+            if (!cetAiguilleur.aiguillageServeursCanaux.contient(cheminURL)) {
                 req.reject(404, "Web Socket - requête rejetée : chemin non valide.");
             } else {
                 let connexion = req.accept('echo-protocol', req.origin);
                 let adresseIPClient = req.remoteAddress;
-                this.traiterRequeteInitiale(chemin, connexion, adresseIPClient, nombreUtilisateurs, initialise);
+                this.traiterRequeteInitiale(cheminURL, connexion, adresseIPClient, nombreUtilisateurs, initialise);
             }
         });
 
@@ -483,7 +501,7 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
     }
 
     /**
-     * Traite la requête initiale du client par les actions suivantes :
+     * Traite la requête initiale du client par les actions suivantes:
      * - création du canal,
      * - traitement de la connexion par le canal,
      * - enregistrement du traitement des messages par le canal,

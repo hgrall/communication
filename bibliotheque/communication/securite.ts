@@ -1,20 +1,16 @@
-import {ParsedUrlQuery} from "querystring";
-// @ts-ignore
-import * as crypto from "crypto-browserify";
+// import * as crypto from "crypto-browserify";
 
 const CONFIG = require('../../config.json');
 
 /**
- * Vérifier si le code d'accès es valide
- * @param query les paramètres reçu dans la requête HTTP
+ * Vérifie si le code d'accès es valide
+ * @param code code d'accès
  * */
-export function verifierCodedAcces(query: string | ParsedUrlQuery | null): boolean {
+export function codeAccesEstValide(code: string): boolean {
     let codesValides = ["A1", "B2", "C3"]; // provisoire
     if (process.env.CODES != null)
         codesValides = process.env.CODES.split(",");
-
-    // @ts-ignore
-    return (query != null && query.code != null && codesValides.includes(query.code));
+    return (codesValides.includes(code));
 }
 
 /**
