@@ -1,3 +1,5 @@
+Jeu de distribution - Description de la structure générale et du protocole de communication
+
 * Consigne
 
 - message à envoyer : 7 bits, le premier et le dernier étant des zéros
@@ -48,8 +50,7 @@
 
 - noeuds : Noeud*
 - implémentation mutable 
-- assembleur permettant de créer un réseau mutable converti finalement en
-  un réseau immutable
+- assembleur permettant de créer un réseau mutable converti finalement en un réseau immutable
 
 * Protocole de communication
 

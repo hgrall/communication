@@ -20,7 +20,7 @@ export interface FormatTableMutable<T> extends MesurableMutable {
 }
 
 /**
- * Format JSON pour les tabless.
+ * Format JSON pour les tables.
  * Structure :
  * - taille : taille de la table
  * - table : type indexé associant à une chaîne une valeur dans T

@@ -265,7 +265,7 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
                     return;
                 }
                 if (m.ID_destinataire.val !== this.individuSujet.ID.val) {
-                    console.log("- message incohéent");
+                    console.log("- message incohérent");
                     return;
                 }
                 let emetteur: Individu = this.individusObjets.valeur(m.ID_emetteur);
@@ -284,11 +284,11 @@ class CorpsBrut extends React.Component<ProprietesCorps, EtatCorps> {
             /* Message accusant réception */
             if (m.type === TypeMessageTchat.AR) {
                 if (!this.individusObjets.contient(m.ID_destinataire)) {
-                    console.log("- message incohéent");
+                    console.log("- message incohérent");
                     return;
                 }
                 if (m.ID_emetteur.val !== this.individuSujet.ID.val) {
-                    console.log("- message incohéent");
+                    console.log("- message incohérent");
                     return;
                 }
                 let destinataire = this.individusObjets.valeur(m.ID_destinataire);

@@ -6,19 +6,14 @@
 
 * Architecture générale
 
-- applicationTchat : application principale côté serveur (déclarée dans
-  Procfile pour Heroku)
+- applicationTchat : application principale côté serveur (déclarée dans Procfile pour Heroku)
   - serveur d'applications de tchat : initialisé puis démarré
   - aiguilleur de tchat : initialisé puis démarré 
 
-- serveurTchat : serveur d'applications, aiguilleur, serveur de canaux,
-  canaux - implémentation de la communication client-serveur par Web
-  Socket 
+- serveurTchat : serveur d'applications, aiguilleur, serveur de canaux, canaux - implémentation de la communication client-serveur par Web Socket 
   - ServeurApplicationsTchat
-    - réseaux à connecter (déclinés par chemin d'accès) : 5 en étoile, 5
-      en anneau
-    - service de "build/interfaceTchat.html" pour toute requête GET sur
-      un chemin valide (etoileX ou anneauX)
+    - réseaux à connecter (déclinés par chemin d'accès) : 5 en étoile, 5 en anneau
+    - service de "build/interfaceTchat.html" pour toute requête GET sur un chemin valide (etoileX ou anneauX)
   - AiguilleurTchat
     - serveur d'applications
     - réseaux connectés : portions de réseaux effectivement connectées

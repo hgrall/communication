@@ -131,7 +131,7 @@ export interface ReseauMutable<S extends FormatIdentifiable<'sommet'>> extends
 
 /**
  * Réseau abstrait mutable implémenté comme une table mutable d'identification
- * de noeudss. La représentation est abstraite et doit être
+ * de noeuds. La représentation est abstraite et doit être
  * implémentée dans les classes concrètes dérivées.
  * @param S description des sommets en JSON
  */

@@ -44,7 +44,7 @@ export interface FormatInformation {
 export interface FormatMessage { }
 
 /**
- * Interface pour les messages abstraitss.
+ * Interface pour les messages abstraits.
  *
  * @param FMsg type représentant en JSON les messages.
  * @param EtMsg étiquettes utiles pour la représentation d'un message.
