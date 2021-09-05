@@ -7,30 +7,20 @@ const CONFIG = require('../../config.json');
  * @param code code d'accès
  * */
 export function codeAccesEstValide(code: string): boolean {
-    let codesValides = ["A1", "B2", "C3"]; // provisoire
+    let codesValides = ["IMTA_5", "IMTA_10", "IMTA_15", "IMTA_20"]; // provisoire
     if (process.env.CODES != null)
         codesValides = process.env.CODES.split(",");
     return (codesValides.includes(code));
 }
 
 /**
- * Obtenir les configurations à partir du code d'accès.
- * Identifiant dans config.json : la somme des codes ASCII de chaque char du code d'accès.
+ * Nombre d'utilisateurs à partir du code d'accès.
  * @param code le code d'accès déjà validé
  * */
-export function obtenirConfig(code: string): number {
-    let nombreUtilisateurs = 15; // default
-
-    // obtenir la somme des codes ascii de chaque char du code
-    let sumAscii = code.split("").reduce((acc: number, val: string) => {
-        return acc + val.charCodeAt(0);
-    }, 0);
-
-    // la somme ascii est l'identifiant de la configuration correspondante
-    if (CONFIG[sumAscii.toString()])
-        nombreUtilisateurs = CONFIG[sumAscii.toString()].nombreUtilisateurs;
-
-    console.log("# nombreUtilisateurs : " + nombreUtilisateurs);
+export function calculNombreUtilisateurs(code: string): number {
+    let n : string = code.split("_")[1]; 
+    let nombreUtilisateurs = parseInt(n, 10);
+    console.log("- nombre d'utilisateurs : " + nombreUtilisateurs);
     return nombreUtilisateurs;
 }
 

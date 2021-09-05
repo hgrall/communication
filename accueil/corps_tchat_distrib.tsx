@@ -1,7 +1,6 @@
 import * as React from "react";
 import styled, {keyframes} from "styled-components";
 import {useState} from "react";
-import { codeAccesEstValide } from "../bibliotheque/communication/securite";
 
 const Wrapper = styled.section`
   display: flex;
@@ -116,13 +115,26 @@ interface JeuChoixPageProps {
 
 function JeuChoixPage(props: JeuChoixPageProps) {
     const domain = document.location.origin; // local retourne : http://localhost:8081
+    const lienEtoile = domain + "/tchat/etoile0";
+    const lienAnneau = domain + "/tchat/anneau0";
     const lienJeu1 = domain + "/jeu1/distribution0";
+    const lienAdmin = domain + "/admin";
+    console.log(lienEtoile)
 
     return (
         <Wrapper>
             <Title>A quel jeu voulez-vous jouer ?</Title>
+            <Form action={lienEtoile}>
+                <Button type="submit" name="code" value={props.code}>Tchat en étoile</Button>
+            </Form>
+            <Form action={lienAnneau}>
+                <Button type="submit" name="code" value={props.code}>Tchat en anneau</Button>
+            </Form>
             <Form action={lienJeu1}>
                 <Button type="submit" name="code" value={props.code}>Distribution</Button>
+            </Form>
+            <Form action={lienAdmin}>
+                <Button type="submit" name="code" value={props.code}>Page d'administration</Button>
             </Form>
             <Hr/>
             <Form>
@@ -147,7 +159,11 @@ export class Corps extends React.Component<{}, EtatAccueil> {
     }
 
     handleSubmit(code: string) {
-        if (codeAccesEstValide(code))
+        let codesValides = ["A1", "B2", "C3"]; // provisoire
+        if (process.env.CODES != null)
+            codesValides = process.env.CODES.split(",");
+
+        if (codesValides.includes(code))
             this.setState({aCode: true, code: code});
         else
             alert("Ce code n'est pas valide !");

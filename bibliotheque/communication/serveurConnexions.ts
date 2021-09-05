@@ -16,7 +16,7 @@ import {
 } from "../reseau/formats";
 
 import { ServeurApplications } from './serveurApplications';
-import {obtenirConfig, codeAccesEstValide} from "./securite";
+import {calculNombreUtilisateurs, codeAccesEstValide} from "./securite";
 import {MAX_ECOLES} from "../../applications/applicationsMerite";
 
 /**
@@ -438,7 +438,7 @@ export class AiguilleurWebSocket<S extends ServeurApplications>
             let nombreUtilisateurs: number;
             if (codeAccesEstValide(code)) {
                 // Obtenir les configurations (nombre d'utilisateurs)
-                nombreUtilisateurs = obtenirConfig(code);
+                nombreUtilisateurs = calculNombreUtilisateurs(code);
             } else {
                 req.reject(401, "Code d'accès invalide.");
                 return;
