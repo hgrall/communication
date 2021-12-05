@@ -50,7 +50,7 @@ Pour utiliser les applications dans l'établissement scolaire, il est nécessair
     ```
 3. Récupérer la clé d'accès :  
    - ouvrir un navigateur à l'adresse suivante : `http://localhost:8080/connexion`,
-   - entrer le code d'accès `demo`, puis récupérer la clé d'accès (six chiffres en hexadécimal, comme `b72081` par exemple,).
+   - entrer le code d'accès `demo`, puis récupérer et sauvegarder la clé d'accès (six chiffres en hexadécimal, comme `b72081` par exemple,).
 4. Tester l'application de tchat :
    - ouvrir dans un nouvel onglet l'adresse suivante : `http://localhost:8080/accueil/`,
    - entrer la clé d'accès formée de six chiffres hexadécimaux : le menu principal s'ouvre, permettant de choisir entre 
@@ -58,7 +58,7 @@ Pour utiliser les applications dans l'établissement scolaire, il est nécessair
      - un jeu de tchat en anneau,
    - sélectionner un des jeux, qui s'ouvre alors,
    - fermer ce dernier onglet pour ne plus être un utilisateur du tchat.
-5. Pour récupérer l'adresse du serveur, exécuter la commande suivante.
+5. Pour récupérer l'adresse du serveur, exécuter la commande suivante dans l'invite de commandes MS-DOS.
     ```
         echo Adresse du serveur : http://%COMPUTERNAME%.%USERDOMAIN%:8080
     ```
@@ -82,6 +82,8 @@ Instructions à suivre par les élèves
 
 Chaque jeu comporte cinq réseaux de cinq utilisateurs, soit vingt-cinq utilisateurs. Dans un tchat en étoile, le réseau forme un graphe complet : chaque utilisateur est relié à tous les autres. Dans un tchat en anneau, le réseau forme un anneau : chaque utilisateur est relié à deux voisins. La connexion d'un utilisateur au tchat dure le temps de la connexion de l'onglet : elle s'arrête si l'onglet est fermé mais aussi si la page est rechargée. Lorsque les cinq réseaux sont remplis, il devient impossible de se connecter : un message avertit que le réseau est complet.  
    
+Cette application de tchat n'utilise pas le protocole des "Web Sockets" mais des connexions http persistantes. Il existe une limitation à leur utilisation dans un navigateur : à tout moment, le nombre de connexions persistantes ouvertes ne doit pas dépasser une limite, de l'ordre de cinq ou six. 
+
 ## Exécution locale du jeu de distribution
 
 ### Côté serveur - Professeur
@@ -93,7 +95,7 @@ Chaque jeu comporte cinq réseaux de cinq utilisateurs, soit vingt-cinq utilisat
     ```
 3. Tester l'application du jeu de distribution :
    - ouvrir dans un nouvel onglet l'adresse suivante : `http://localhost:8081/`,
-   - entrer un des quatre codes d'accès : `IMTA_5`, `IMTA_10`, `IMTA_15` ou `IMTA_20` : le menu principal s'ouvre, permettant de sélectionner le jeu de distribution, qui s'ouvre alors,
+   - entrer un des quatre codes d'accès, `IMTA_5`, `IMTA_10`, `IMTA_15` ou `IMTA_20`, où le nombre indique le nombre d'utilisateurs : le menu principal s'ouvre, permettant de sélectionner le jeu de distribution, qui s'ouvre alors,
    - fermer ce dernier onglet pour ne plus être un utilisateur du jeu.
 5. Pour récupérer l'adresse du serveur, exécuter la commande suivante.
     ```
@@ -115,7 +117,9 @@ Le professeur communique aux élèves de sa classe
 
 Instructions à suivre par les élèves  
 1. Ouvrir un navigateur.
-2. Dans un nouvel onglet, dans la barre des adresses, entrer `adresseServeur/accueil/`.
+2. Dans un nouvel onglet, dans la barre des adresses, entrer `adresseServeur/`.
 3. Entrer le code d'accès : le menu principal s'ouvre, permettant de sélectionner le jeu de distribution, qui s'ouvre alors.
 
 Le jeu de distribution comporte un réseau en anneau de cinq domaines. Chaque domaine contient un à quatre utilisateurs, suivant la configuration choisie. La connexion d'un utilisateur au jeu dure le temps de la connexion de l'onglet : elle s'arrête si l'onglet est fermé mais aussi si la page est rechargée. Lorsque le réseau est complet, il devient impossible de se connecter : un message avertit que le réseau est complet.  
+
+Cette application de distribution utilise le protocole des "Web Sockets" : il n'y a pas de limitation pour le nombre d'onglets ouverts simultanément dans un navigateur.
